@@ -1,4 +1,4 @@
-// Generated from C:\Users\Carol\Documents\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
+// Generated from C:\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
 package t1;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -52,13 +52,13 @@ public class LABaseListener implements LAListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDecl_local(LAParser.Decl_localContext ctx) { }
+	@Override public void enterDeclaracao_local(LAParser.Declaracao_localContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDecl_local(LAParser.Decl_localContext ctx) { }
+	@Override public void exitDeclaracao_local(LAParser.Declaracao_localContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

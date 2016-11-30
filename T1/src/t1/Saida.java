@@ -14,4 +14,8 @@ public class Saida {
     public static String getTexto() {
         return texto.toString();
     }
+
+    static boolean is_modified() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

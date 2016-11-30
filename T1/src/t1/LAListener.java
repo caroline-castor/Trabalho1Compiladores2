@@ -1,4 +1,4 @@
-// Generated from C:\Users\Carol\Documents\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
+// Generated from C:\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
 package t1;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -38,15 +38,15 @@ public interface LAListener extends ParseTreeListener {
 	 */
 	void exitDecl_local_global(LAParser.Decl_local_globalContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LAParser#decl_local}.
+	 * Enter a parse tree produced by {@link LAParser#declaracao_local}.
 	 * @param ctx the parse tree
 	 */
-	void enterDecl_local(LAParser.Decl_localContext ctx);
+	void enterDeclaracao_local(LAParser.Declaracao_localContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LAParser#decl_local}.
+	 * Exit a parse tree produced by {@link LAParser#declaracao_local}.
 	 * @param ctx the parse tree
 	 */
-	void exitDecl_local(LAParser.Decl_localContext ctx);
+	void exitDeclaracao_local(LAParser.Declaracao_localContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LAParser#variavel}.
 	 * @param ctx the parse tree

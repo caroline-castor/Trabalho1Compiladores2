@@ -1,4 +1,4 @@
-// Generated from C:\Users\Carol\Documents\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
+// Generated from C:\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
 package t1;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -29,11 +29,11 @@ public interface LAVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDecl_local_global(LAParser.Decl_local_globalContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LAParser#decl_local}.
+	 * Visit a parse tree produced by {@link LAParser#declaracao_local}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDecl_local(LAParser.Decl_localContext ctx);
+	T visitDeclaracao_local(LAParser.Declaracao_localContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LAParser#variavel}.
 	 * @param ctx the parse tree

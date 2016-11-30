@@ -1,4 +1,4 @@
-// Generated from C:\Users\Carol\Documents\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
+// Generated from C:\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
 package t1;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -102,18 +102,18 @@ public class LALexer extends Lexer {
 	}
 
 
-	   public static String grupo="";
-	   PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
-	   TabelaDeSimbolos TabelaDeTipos = new TabelaDeSimbolos("tipos");
-	   PilhaDeTabelas TabelasDeRegistros = new PilhaDeTabelas();
-	   String error="";
+		private void stop(String msg)
+		{
+			throw new ParseCancellationException(msg);
+		}
 	   
-	/*
-	Pilha de tabelas: armazena as pilhas utilizadas para análise sintática
-	Tabela de Registros: armazena os registros declarados
-	Tabela de Tipo: armazena tipos (inteiros, reais e outros)
-	Error: acusa o erro durante análise semantica
-	*/
+	        PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
+		
+		Saida outSemantico = new Saida();
+
+	        private void erroSemantico(String msg) {
+			outSemantico.println(msg);        
+		}
 
 
 	public LALexer(CharStream input) {

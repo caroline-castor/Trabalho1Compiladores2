@@ -1,4 +1,4 @@
-// Generated from C:\Users\Carol\Documents\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
+// Generated from C:\Trabalho1-Compiladores2\T1\src\t1\LA.g4 by ANTLR 4.5.3
 package t1;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -38,7 +38,7 @@ public class LABaseVisitor<T> extends AbstractParseTreeVisitor<T> implements LAV
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDecl_local(LAParser.Decl_localContext ctx) { return visitChildren(ctx); }
+	@Override public T visitDeclaracao_local(LAParser.Declaracao_localContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
