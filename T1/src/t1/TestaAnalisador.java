@@ -25,10 +25,10 @@ public class TestaAnalisador {
             // Inicio 
            
             LAParser.ProgramaContext raiz = parser.programa();
-            AnalisadorSemantico as = new AnalisadorSemantico(out);
+            
          
             ParseTreeWalker ptw = new ParseTreeWalker();
-            ptw.walk(as, raiz);
+            
         } catch (RuntimeException e) {
             // Pega as mensagens de erro semanticas
             if (e.getMessage() != null) {

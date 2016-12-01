@@ -102,18 +102,12 @@ public class LALexer extends Lexer {
 	}
 
 
-		private void stop(String msg)
-		{
-			throw new ParseCancellationException(msg);
-		}
-	   
-	        PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
-		
-		Saida outSemantico = new Saida();
-
-	        private void erroSemantico(String msg) {
-			outSemantico.println(msg);        
-		}
+	   public static String grupo="551503,";
+	   String msg_error="";
+	   PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
+	   PilhaDeTabelas tabelaRegistros = new PilhaDeTabelas();
+	   TabelaDeSimbolos tabelaTipos = new TabelaDeSimbolos("tipos");
+	     
 
 
 	public LALexer(CharStream input) {

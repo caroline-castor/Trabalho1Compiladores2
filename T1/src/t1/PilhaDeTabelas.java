@@ -2,7 +2,6 @@ package t1;
 
 //Classe que implementa uma pilha para as Tabelas de Simbolos
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,25 +38,14 @@ public class PilhaDeTabelas {
             }
         }
         return null;
-    }
-    
-     public TabelaDeSimbolos getSubtabela(String tipo)
-    {
-        for(int i = 0; i < pilha.size(); i++) {
-            if(pilha.get(i).existeSimbolo(tipo)) {
-                return pilha.get(i).getSubtabela(tipo);
-            }
-        }
-        
-        return null;
-    }
+    }//Retorna a tabela de simbolos que contém o simbolo passado como parâmetro
     
     public String getTipoDoSimbolo(String nome){
         TabelaDeSimbolos auxiliar = this.getTabelaDoSimbolo(nome);
-        String tipo = auxiliar.getTipo(nome);
+        String tipo = auxiliar.GetTipoSimbolo(nome);
         return tipo;
     
-    }
+    }//Retorna o tipo do simbolo passado como parâmetro
     
 
     public TabelaDeSimbolos existeTabela(String nome) {
@@ -68,20 +56,6 @@ public class PilhaDeTabelas {
         }
         return null;
     }//Retorna a tabela de simbolos cujo nome(escopo) é igual ao passado como parâmetro
-    
-      public List<String> getListaPar(String subRotina)
-    {
-        List<String> parametros = new ArrayList<String>();
-        for(int i = 0; i < pilha.size(); i++) {
-            if(pilha.get(i).existeSimbolo(subRotina)) {
-                return pilha.get(i).getListaPar(subRotina);
-            }
-        }
-        
-        return parametros;
-    }
-      
-     
 
     public void desempilhar() {
         TabelaDeSimbolos ret = pilha.pop();
