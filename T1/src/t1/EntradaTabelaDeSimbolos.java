@@ -3,8 +3,8 @@ package t1;
 import java.util.ArrayList;
 import java.util.List;
 
-/* Classe que define como os simbolos serão armazenados. Todos terão um nome e um tipo associado.
-*/
+
+
 public class EntradaTabelaDeSimbolos {
     private String nome, tipo;
      private List<String> parametros;
@@ -14,7 +14,7 @@ public class EntradaTabelaDeSimbolos {
         this.nome = nome;
         this.tipo = tipo;
     }
-    
+    // entrada na tabela de simbolos
       public EntradaTabelaDeSimbolos(String nome, String tipo, List<String> listaPassada, TabelaDeSimbolos sub) 
     {
         this.nome = nome;
@@ -26,7 +26,7 @@ public class EntradaTabelaDeSimbolos {
             this.parametros = listaPassada;
         }else
         {
-	    //inicializacao dos parametros
+	  
             this.parametros = new ArrayList<String>();
         
             for(int i=0; i< listaPassada.size(); i++)
@@ -38,18 +38,18 @@ public class EntradaTabelaDeSimbolos {
         
     }
       
-      public List<String> getListaPar(){
-        return this.parametros;
-    }
-    
+    // retorna o nome daa variavel
     public String getNome() {
         return nome;
     }
     
+    //retorna a subtabela
      public TabelaDeSimbolos getsubTabela()
     {
         return this.subTabeladoRegistro;
     }
+     
+    //retorna o tipo da variavel
     public String getTipo() {
         return tipo;
     }

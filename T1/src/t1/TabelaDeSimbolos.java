@@ -13,6 +13,16 @@ public class TabelaDeSimbolos {
         this.escopo = escopo;
     }
     
+     public void adicionarSimbolo(String nome, String tipo, List<String> parametros, TabelaDeSimbolos sub) {
+        simbolos.add(new EntradaTabelaDeSimbolos(nome,tipo, parametros, sub));
+    }
+    
+    public void adicionarSimbolos(List<String> nomes, String tipo, List<String> parametros, TabelaDeSimbolos sub) {
+        for(String s:nomes) {
+            simbolos.add(new EntradaTabelaDeSimbolos(s, tipo, parametros, sub));
+        }
+    }
+    
     public void adicionarSimbolo(String nome, String tipo) {
         simbolos.add(new EntradaTabelaDeSimbolos(nome,tipo));
     }
@@ -31,27 +41,34 @@ public class TabelaDeSimbolos {
         return atributos;
     }
     
-    public List<String> getSimbolos_tipos(){
-        List<String> atributos = new ArrayList<String>();
-        for(int i=0; i< simbolos.size();i++){
-            atributos.add(simbolos.get(i).getTipo());
+        public TabelaDeSimbolos getSubtabela(String tipo)
+    {
+        for(int i = 0; i < simbolos.size(); i++) {
+            if(simbolos.get(i).getNome().equals(tipo)) {
+                return simbolos.get(i).getsubTabela();
+            }
         }
-        return atributos;
-    }//Retorna uma lista com tosos os tipos dos simbolos
+        
+        return null;
+    }
     
-    public List<EntradaTabelaDeSimbolos> getSimbolos2(){
+ 
+    
+    //lista com todos simbolos de uma tabela
+    public List<EntradaTabelaDeSimbolos> getListaSimbolosTabela(){
         List<EntradaTabelaDeSimbolos> atributos = new ArrayList<EntradaTabelaDeSimbolos>();
         for(int i=0; i< simbolos.size();i++){
             atributos.add(simbolos.get(i));
         }
         return atributos;
-    }//Retorna uma lista com todos os SIMBOLOS da tabela
+    }
     
-    
+    //pega o escopo
     public String getEscopo(){
         return this.escopo;
-        } //Retorna o escopo da tabela
+        } 
     
+    //verifica se existe o simbolo
     public boolean existeSimbolo(String nome) {
         for(EntradaTabelaDeSimbolos etds:simbolos) {
             if(etds.getNome().equals(nome)) {
@@ -59,25 +76,17 @@ public class TabelaDeSimbolos {
             }
         }
         return false;
-    }//Verifica se um simbolo pertence à tabela
-    
-    public EntradaTabelaDeSimbolos getSimbolo(String nome){
-        for(EntradaTabelaDeSimbolos etds:simbolos) {
-            if(etds.getNome().equals(nome)) {
-                return etds;
-            }
-        }
-        return null;
-    } //Retorna o simbolo de acordo com o nome passado como parâmetro se o simbolo existir na tabela
-    
-    public String GetTipoSimbolo(String nome) {
+    }
+
+    //retorna tipo do simbolo
+    public String getTipoSimbolo(String nome) {
         for(EntradaTabelaDeSimbolos etds:simbolos) {
             if(etds.getNome().equals(nome)) {
                 return etds.getTipo();
             }
         }
-        return "SEM_TIPO";
-    }// Retorna o tipo do simbolo caso o simbolo esteja presente na tabela
+        return "TIPO_NAO_DECLARADO";
+    }
     
     @Override
     public String toString() {

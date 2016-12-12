@@ -21,7 +21,7 @@ public class PilhaDeTabelas {
     public TabelaDeSimbolos topo() {
         return pilha.peek();
     }
-
+    // verifica se um simbolo existe
     public boolean existeSimbolo(String nome) {
         for (TabelaDeSimbolos ts : pilha) {
             if (ts.existeSimbolo(nome)) {
@@ -29,8 +29,21 @@ public class PilhaDeTabelas {
             }
         }
         return false;
-    }//Verifica se um simbolo pertence à alguma tabela de simbolos da pilha de tabelas
+    }
     
+    //recupera a subtabela (escopo dentro de outro)
+      public TabelaDeSimbolos getSubtabela(String tipo)
+    {
+        for(int i = 0; i < pilha.size(); i++) {
+            if(pilha.get(i).existeSimbolo(tipo)) {
+                return pilha.get(i).getSubtabela(tipo);
+            }
+        }
+        
+        return null;
+    }
+    
+      //Retorna a tabela que tem o simbolo
     public TabelaDeSimbolos getTabelaDoSimbolo(String nome) {
         for (TabelaDeSimbolos ts : pilha) {
             if (ts.existeSimbolo(nome)) {
@@ -38,16 +51,17 @@ public class PilhaDeTabelas {
             }
         }
         return null;
-    }//Retorna a tabela de simbolos que contém o simbolo passado como parâmetro
+    }
     
+    // retorna o tipo de um simbolo
     public String getTipoDoSimbolo(String nome){
         TabelaDeSimbolos auxiliar = this.getTabelaDoSimbolo(nome);
-        String tipo = auxiliar.GetTipoSimbolo(nome);
+        String tipo = auxiliar.getTipoSimbolo(nome);
         return tipo;
     
-    }//Retorna o tipo do simbolo passado como parâmetro
+    }
     
-
+    //Verifica se a tabela existe no escopo
     public TabelaDeSimbolos existeTabela(String nome) {
         for (TabelaDeSimbolos ts : pilha) {
             if (ts.getEscopo().equals(nome)) {
@@ -55,14 +69,12 @@ public class PilhaDeTabelas {
             }
         }
         return null;
-    }//Retorna a tabela de simbolos cujo nome(escopo) é igual ao passado como parâmetro
+    }
 
     public void desempilhar() {
         TabelaDeSimbolos ret = pilha.pop();
         Saida.println(ret.toString());
     }
 
-    public List getTodasTabelas() {
-        return pilha;
-    }
+   
 }

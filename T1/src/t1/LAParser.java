@@ -132,7 +132,7 @@ public class LAParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-	   public static String grupo="551503,";
+	   public static String grupo="551503, 586773";
 	   String msg_error="";
 	   PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
 	   PilhaDeTabelas tabelaRegistros = new PilhaDeTabelas();
@@ -347,9 +347,9 @@ public class LAParser extends Parser {
 
 	public static class Declaracao_localContext extends ParserRuleContext {
 		public VariavelContext variavel;
-		public Token v1;
-		public Tipo_basicoContext v2;
-		public TipoContext v3;
+		public Token id;
+		public Tipo_basicoContext tipoBasico;
+		public TipoContext tipoId;
 		public TerminalNode DECLARE() { return getToken(LAParser.DECLARE, 0); }
 		public VariavelContext variavel() {
 			return getRuleContext(VariavelContext.class,0);
@@ -404,7 +404,7 @@ public class LAParser extends Parser {
 				       /* aqui há um loop para percorrer os nomes das variaveis declaradas pois podemos declarar varios nomes
 				       de variáveis do mesmo tipo de uma só vez. Essa parte entra juntamente com o processamento de variaveis e consequentemente
 				       de mais_variaveis pois lá atribuimos nomes, tipo e linha que pegamos aqui para tratar*/
-				       for (String s : ((Declaracao_localContext)_localctx).variavel.nomes){
+				       for (String s : ((Declaracao_localContext)_localctx).variavel.listaVar){
 				         // verificação se existe o símbolo na pilha de tabelas
 				            if(pilhaDeTabelas.topo().existeSimbolo(s)){
 				            // se existir, é emitida uma mensagem de erro que a variavel com identificador já foi declarada
@@ -422,7 +422,7 @@ public class LAParser extends Parser {
 				                        //resgatamos a tabela do registro na qual o tipo declarado pertence
 				                        TabelaDeSimbolos tabela_registro = tabelaRegistros.existeTabela(((Declaracao_localContext)_localctx).variavel.tipoSimbolo);
 				                        //adicionamos todas variaveis do registro naa tabela
-				                        for (EntradaTabelaDeSimbolos t : tabela_registro.getSimbolos2()){
+				                        for (EntradaTabelaDeSimbolos t : tabela_registro.getListaSimbolosTabela()){
 				                            pilhaDeTabelas.topo().adicionarSimbolo(s+"."+t.getNome(), t.getTipo());
 				                        }
 				                    }else{
@@ -431,7 +431,7 @@ public class LAParser extends Parser {
 				                            //recuperamos a tabela de registro 
 				                            TabelaDeSimbolos tabela_registro = tabelaRegistros.existeTabela("registro");
 				                            //e adicionamos cada variavel pertencente ao registro a ela
-				                            for (EntradaTabelaDeSimbolos t : tabela_registro.getSimbolos2())
+				                            for (EntradaTabelaDeSimbolos t : tabela_registro.getListaSimbolosTabela())
 				                            {
 				                                pilhaDeTabelas.topo().adicionarSimbolo(s+"."+t.getNome(), t.getTipo());
 				                            }
@@ -455,24 +455,24 @@ public class LAParser extends Parser {
 				setState(141);
 				match(CONSTANTE);
 				setState(142);
-				((Declaracao_localContext)_localctx).v1 = match(IDENT);
+				((Declaracao_localContext)_localctx).id = match(IDENT);
 				setState(143);
 				match(DOIS_PONTOS);
 				setState(144);
-				((Declaracao_localContext)_localctx).v2 = tipo_basico();
+				((Declaracao_localContext)_localctx).tipoBasico = tipo_basico();
 				setState(145);
 				match(IGUAL);
 				setState(146);
 				valor_constante();
 
 				       //primeiro verificamos se existe uma variavel no mesmo escopo com o mesmo nome
-				       if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_localContext)_localctx).v1.getText()))
+				       if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_localContext)_localctx).id.getText()))
 				           // se existir é executado um erro  
-				            msg_error += "Linha " + ((Declaracao_localContext)_localctx).v1.getLine() + ": identificador "+((Declaracao_localContext)_localctx).v1.getText()+" ja declarado anteriormente\n" ;
+				            msg_error += "Linha " + ((Declaracao_localContext)_localctx).id.getLine() + ": identificador "+((Declaracao_localContext)_localctx).id.getText()+" ja declarado anteriormente\n" ;
 				        else{
 				            // se ainda não foi declara nenhuma variavel com esse nome, então o identificador da variável e tipo são
 				            // adiicionados no escopo atual
-				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_localContext)_localctx).v1.getText(), ((Declaracao_localContext)_localctx).v2.tipoSimbolo);
+				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_localContext)_localctx).id.getText(), ((Declaracao_localContext)_localctx).tipoBasico.tipoSimbolo);
 				         }
 				       
 				}
@@ -483,21 +483,21 @@ public class LAParser extends Parser {
 				setState(149);
 				match(TIPO);
 				setState(150);
-				((Declaracao_localContext)_localctx).v1 = match(IDENT);
+				((Declaracao_localContext)_localctx).id = match(IDENT);
 				setState(151);
 				match(DOIS_PONTOS);
 				setState(152);
-				((Declaracao_localContext)_localctx).v3 = tipo(((Declaracao_localContext)_localctx).v1.getText());
+				((Declaracao_localContext)_localctx).tipoId = tipo(((Declaracao_localContext)_localctx).id.getText());
 
 				        //primeiro verificamos se já existe um identificador com mesmo nome já declarado
-				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_localContext)_localctx).v1.getText()))
+				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_localContext)_localctx).id.getText()))
 				           // se existir executa um erro
-				            msg_error += "Linha " + ((Declaracao_localContext)_localctx).v1.getLine() + ": identificador "+((Declaracao_localContext)_localctx).v1.getText()+" ja declarado anteriormente\n" ;
+				            msg_error += "Linha " + ((Declaracao_localContext)_localctx).id.getLine() + ": identificador "+((Declaracao_localContext)_localctx).id.getText()+" ja declarado anteriormente\n" ;
 				        else{
 				           // se não existir então adiciona-se o identificador e tipo no escopo atual
-				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_localContext)_localctx).v1.getText(), ((Declaracao_localContext)_localctx).v3.tipoSimbolo);
+				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_localContext)_localctx).id.getText(), ((Declaracao_localContext)_localctx).tipoId.tipoSimbolo);
 				            //e também adiciona-se um novo tipo, pois estamos declarando um novo tipo
-				            tabelaTipos.adicionarSimbolo(((Declaracao_localContext)_localctx).v1.getText(), ((Declaracao_localContext)_localctx).v3.tipoSimbolo);  
+				            tabelaTipos.adicionarSimbolo(((Declaracao_localContext)_localctx).id.getText(), ((Declaracao_localContext)_localctx).tipoId.tipoSimbolo);  
 				        }
 				    
 				}
@@ -518,12 +518,12 @@ public class LAParser extends Parser {
 	}
 
 	public static class VariavelContext extends ParserRuleContext {
-		public List<String> nomes;
+		public List<String> listaVar;
 		public String tipoSimbolo;
 		public int linha;
-		public Token v1;
-		public Mais_varContext v2;
-		public TipoContext m3;
+		public Token id;
+		public Mais_varContext maisVar;
+		public TipoContext tipoVar;
 		public DimensaoContext dimensao() {
 			return getRuleContext(DimensaoContext.class,0);
 		}
@@ -557,28 +557,28 @@ public class LAParser extends Parser {
 	public final VariavelContext variavel() throws RecognitionException {
 		VariavelContext _localctx = new VariavelContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_variavel);
-		((VariavelContext)_localctx).nomes =  new ArrayList<String>(); ((VariavelContext)_localctx).tipoSimbolo = ""; ((VariavelContext)_localctx).linha = -1;
+		((VariavelContext)_localctx).listaVar =  new ArrayList<String>(); ((VariavelContext)_localctx).tipoSimbolo = ""; ((VariavelContext)_localctx).linha = -1;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(157);
-			((VariavelContext)_localctx).v1 = match(IDENT);
+			((VariavelContext)_localctx).id = match(IDENT);
 			setState(158);
 			dimensao();
 			setState(159);
-			((VariavelContext)_localctx).v2 = mais_var();
+			((VariavelContext)_localctx).maisVar = mais_var();
 			setState(160);
 			match(DOIS_PONTOS);
 			setState(161);
-			((VariavelContext)_localctx).m3 = tipo(_localctx.tipoSimbolo);
+			((VariavelContext)_localctx).tipoVar = tipo(_localctx.tipoSimbolo);
 
-			        ((VariavelContext)_localctx).tipoSimbolo =  ((VariavelContext)_localctx).m3.tipoSimbolo;
-			        _localctx.nomes.add(((VariavelContext)_localctx).v1.getText());
-			        _localctx.nomes.addAll(((VariavelContext)_localctx).v2.nomes);
-			        if(((VariavelContext)_localctx).v2.linha==-1){
-			            ((VariavelContext)_localctx).linha =  ((VariavelContext)_localctx).v1.getLine();
+			        ((VariavelContext)_localctx).tipoSimbolo =  ((VariavelContext)_localctx).tipoVar.tipoSimbolo;
+			        _localctx.listaVar.add(((VariavelContext)_localctx).id.getText());
+			        _localctx.listaVar.addAll(((VariavelContext)_localctx).maisVar.listaVar);
+			        if(((VariavelContext)_localctx).maisVar.linha==-1){
+			            ((VariavelContext)_localctx).linha =  ((VariavelContext)_localctx).id.getLine();
 			        }else{
-			            ((VariavelContext)_localctx).linha =  ((VariavelContext)_localctx).v2.linha;
+			            ((VariavelContext)_localctx).linha =  ((VariavelContext)_localctx).maisVar.linha;
 			        }
 			       
 			    
@@ -596,9 +596,9 @@ public class LAParser extends Parser {
 	}
 
 	public static class Mais_varContext extends ParserRuleContext {
-		public List<String> nomes;
+		public List<String> listaVar;
 		public int linha;
-		public Token v1;
+		public Token id;
 		public List<TerminalNode> VIRGULA() { return getTokens(LAParser.VIRGULA); }
 		public TerminalNode VIRGULA(int i) {
 			return getToken(LAParser.VIRGULA, i);
@@ -635,7 +635,7 @@ public class LAParser extends Parser {
 	public final Mais_varContext mais_var() throws RecognitionException {
 		Mais_varContext _localctx = new Mais_varContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_mais_var);
-		 ((Mais_varContext)_localctx).nomes =  new ArrayList<String>(); ((Mais_varContext)_localctx).linha = -1; 
+		 ((Mais_varContext)_localctx).listaVar =  new ArrayList<String>(); ((Mais_varContext)_localctx).linha = -1; 
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -649,17 +649,17 @@ public class LAParser extends Parser {
 				setState(164);
 				match(VIRGULA);
 				setState(165);
-				((Mais_varContext)_localctx).v1 = match(IDENT);
+				((Mais_varContext)_localctx).id = match(IDENT);
 
 				        //depois que chegamos no identidicador fazemos um processamento para verificar se ele já existe
-				        if(!pilhaDeTabelas.existeSimbolo(((Mais_varContext)_localctx).v1.getText())){
+				        if(!pilhaDeTabelas.existeSimbolo(((Mais_varContext)_localctx).id.getText())){
 				            // se não existe, então adicionamos ele na lista de nomes e pegamos a linha dele
-				            _localctx.nomes.add(((Mais_varContext)_localctx).v1.getText());
-				            ((Mais_varContext)_localctx).linha =  ((Mais_varContext)_localctx).v1.getLine();
+				            _localctx.listaVar.add(((Mais_varContext)_localctx).id.getText());
+				            ((Mais_varContext)_localctx).linha =  ((Mais_varContext)_localctx).id.getLine();
 				        }
 				        else{
 				            //se já existir um identificador com mesmo nome é disprada uma mensagem de erro
-				            msg_error+="Linha " + ((Mais_varContext)_localctx).v1.getLine() + ": identificador " + ((Mais_varContext)_localctx).v1.getText() + " ja declarado anteriormente\n";
+				            msg_error+="Linha " + ((Mais_varContext)_localctx).id.getLine() + ": identificador " + ((Mais_varContext)_localctx).id.getText() + " ja declarado anteriormente\n";
 				           
 				        }
 				     
@@ -685,11 +685,11 @@ public class LAParser extends Parser {
 	}
 
 	public static class IdentificadorContext extends ParserRuleContext {
-		public String txt;
+		public String nomeID;
 		public int linha;
 		public String tipoSimbolo;
-		public Token v1;
-		public Outros_identContext v2;
+		public Token id;
+		public Outros_identContext outrosID;
 		public Ponteiros_opcionaisContext ponteiros_opcionais() {
 			return getRuleContext(Ponteiros_opcionaisContext.class,0);
 		}
@@ -722,25 +722,25 @@ public class LAParser extends Parser {
 	public final IdentificadorContext identificador() throws RecognitionException {
 		IdentificadorContext _localctx = new IdentificadorContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_identificador);
-		 ((IdentificadorContext)_localctx).txt =  ""; ((IdentificadorContext)_localctx).linha = -1; ((IdentificadorContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		 ((IdentificadorContext)_localctx).nomeID =  ""; ((IdentificadorContext)_localctx).linha = -1; ((IdentificadorContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(173);
 			ponteiros_opcionais();
 			setState(174);
-			((IdentificadorContext)_localctx).v1 = match(IDENT);
+			((IdentificadorContext)_localctx).id = match(IDENT);
 			setState(175);
 			dimensao();
 			setState(176);
-			((IdentificadorContext)_localctx).v2 = outros_ident();
+			((IdentificadorContext)_localctx).outrosID = outros_ident();
 
 			        // essa regra se for um registro então é retornado uma string com o nome do identificador '.' atributo
 			        // são os casos de por exemplo pessoa.nome tipo=pessoa, variavel do tipo = nome
 			        // a concatenação do ponto será feita na regra outros_ident
-			        _localctx.txt += (((IdentificadorContext)_localctx).v1!=null?((IdentificadorContext)_localctx).v1.getText():null)+((IdentificadorContext)_localctx).v2.txt;
-			        ((IdentificadorContext)_localctx).linha =  ((IdentificadorContext)_localctx).v1.getLine();
-			        ((IdentificadorContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().GetTipoSimbolo(_localctx.txt); //error
+			        _localctx.nomeID += (((IdentificadorContext)_localctx).id!=null?((IdentificadorContext)_localctx).id.getText():null)+((IdentificadorContext)_localctx).outrosID.txt;
+			        ((IdentificadorContext)_localctx).linha =  ((IdentificadorContext)_localctx).id.getLine();
+			        ((IdentificadorContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().getTipoSimbolo(_localctx.nomeID); //error
 			    
 			}
 		}
@@ -855,7 +855,7 @@ public class LAParser extends Parser {
 				match(PONTO);
 				setState(186);
 				((Outros_identContext)_localctx).id = identificador();
-				 ((Outros_identContext)_localctx).txt =  "."+((Outros_identContext)_localctx).id.txt; 
+				 ((Outros_identContext)_localctx).txt =  "."+((Outros_identContext)_localctx).id.nomeID; 
 				}
 			}
 
@@ -874,7 +874,7 @@ public class LAParser extends Parser {
 
 	public static class DimensaoContext extends ParserRuleContext {
 		public String txt;
-		public Exp_aritmeticaContext v1;
+		public Exp_aritmeticaContext exp;
 		public List<TerminalNode> ABRE_COLCHETE() { return getTokens(LAParser.ABRE_COLCHETE); }
 		public TerminalNode ABRE_COLCHETE(int i) {
 			return getToken(LAParser.ABRE_COLCHETE, i);
@@ -926,10 +926,10 @@ public class LAParser extends Parser {
 					setState(191);
 					match(ABRE_COLCHETE);
 					setState(192);
-					((DimensaoContext)_localctx).v1 = exp_aritmetica();
+					((DimensaoContext)_localctx).exp = exp_aritmetica();
 					setState(193);
 					match(FECHA_COLCHETE);
-					((DimensaoContext)_localctx).txt =  "[" + ((DimensaoContext)_localctx).v1.txt + "]";
+					((DimensaoContext)_localctx).txt =  "[" + ((DimensaoContext)_localctx).exp.txt + "]";
 					}
 					} 
 				}
@@ -953,8 +953,8 @@ public class LAParser extends Parser {
 	public static class TipoContext extends ParserRuleContext {
 		public String tipo_registro;
 		public String tipoSimbolo;
-		public List<String> nomes;
-		public RegistroContext v1;
+		public List<String> nomesVar;
+		public RegistroContext reg;
 		public RegistroContext registro;
 		public Tipo_estendidoContext tipo_estendido;
 		public RegistroContext registro() {
@@ -987,7 +987,7 @@ public class LAParser extends Parser {
 	public final TipoContext tipo(String tipo_registro) throws RecognitionException {
 		TipoContext _localctx = new TipoContext(_ctx, getState(), tipo_registro);
 		enterRule(_localctx, 20, RULE_tipo);
-		((TipoContext)_localctx).tipoSimbolo = ""; ((TipoContext)_localctx).nomes =  new ArrayList<String>();
+		((TipoContext)_localctx).tipoSimbolo = ""; ((TipoContext)_localctx).nomesVar =  new ArrayList<String>();
 		try {
 			setState(207);
 			switch (_input.LA(1)) {
@@ -995,8 +995,8 @@ public class LAParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(201);
-				((TipoContext)_localctx).v1 = ((TipoContext)_localctx).registro = registro(_localctx.tipo_registro);
-				((TipoContext)_localctx).tipoSimbolo = ((TipoContext)_localctx).v1.typeRegistro; _localctx.nomes.addAll(((TipoContext)_localctx).registro.nomes);
+				((TipoContext)_localctx).reg = ((TipoContext)_localctx).registro = registro(_localctx.tipo_registro);
+				((TipoContext)_localctx).tipoSimbolo = ((TipoContext)_localctx).reg.tipoRegistro; _localctx.nomesVar.addAll(((TipoContext)_localctx).registro.nomesVar);
 				}
 				break;
 			case EXPOENTE:
@@ -1028,10 +1028,10 @@ public class LAParser extends Parser {
 	}
 
 	public static class Mais_identContext extends ParserRuleContext {
-		public List<String> nomes;
+		public List<String> nomesVar;
 		public int linha;
-		public IdentificadorContext v1;
-		public Mais_identContext v2;
+		public IdentificadorContext id;
+		public Mais_identContext maisID;
 		public TerminalNode VIRGULA() { return getToken(LAParser.VIRGULA, 0); }
 		public IdentificadorContext identificador() {
 			return getRuleContext(IdentificadorContext.class,0);
@@ -1061,7 +1061,7 @@ public class LAParser extends Parser {
 	public final Mais_identContext mais_ident() throws RecognitionException {
 		Mais_identContext _localctx = new Mais_identContext(_ctx, getState());
 		enterRule(_localctx, 22, RULE_mais_ident);
-		((Mais_identContext)_localctx).nomes =  new ArrayList<String>(); ((Mais_identContext)_localctx).linha = -1;
+		((Mais_identContext)_localctx).nomesVar =  new ArrayList<String>(); ((Mais_identContext)_localctx).linha = -1;
 		try {
 			setState(215);
 			switch (_input.LA(1)) {
@@ -1071,13 +1071,13 @@ public class LAParser extends Parser {
 				setState(209);
 				match(VIRGULA);
 				setState(210);
-				((Mais_identContext)_localctx).v1 = identificador();
+				((Mais_identContext)_localctx).id = identificador();
 				setState(211);
-				((Mais_identContext)_localctx).v2 = mais_ident();
+				((Mais_identContext)_localctx).maisID = mais_ident();
 
-				       _localctx.nomes.add(((Mais_identContext)_localctx).v1.txt);
-				       _localctx.nomes.addAll(((Mais_identContext)_localctx).v2.nomes);
-				       ((Mais_identContext)_localctx).linha = ((Mais_identContext)_localctx).v1.linha;
+				       _localctx.nomesVar.add(((Mais_identContext)_localctx).id.nomeID);
+				       _localctx.nomesVar.addAll(((Mais_identContext)_localctx).maisID.nomesVar);
+				       ((Mais_identContext)_localctx).linha = ((Mais_identContext)_localctx).id.linha;
 				      
 				}
 				break;
@@ -1103,11 +1103,11 @@ public class LAParser extends Parser {
 	}
 
 	public static class Mais_variaveisContext extends ParserRuleContext {
-		public List<String> nomes;
+		public List<String> nomesVar;
 		public String tipoSimbolo;
 		public int linha;
 		public VariavelContext variavel;
-		public Mais_variaveisContext f1;
+		public Mais_variaveisContext maisVar;
 		public VariavelContext variavel() {
 			return getRuleContext(VariavelContext.class,0);
 		}
@@ -1136,7 +1136,7 @@ public class LAParser extends Parser {
 	public final Mais_variaveisContext mais_variaveis() throws RecognitionException {
 		Mais_variaveisContext _localctx = new Mais_variaveisContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_mais_variaveis);
-		((Mais_variaveisContext)_localctx).nomes =  new ArrayList<String>(); ((Mais_variaveisContext)_localctx).tipoSimbolo = ""; ((Mais_variaveisContext)_localctx).linha = -1;
+		((Mais_variaveisContext)_localctx).nomesVar =  new ArrayList<String>(); ((Mais_variaveisContext)_localctx).tipoSimbolo = ""; ((Mais_variaveisContext)_localctx).linha = -1;
 		try {
 			setState(222);
 			switch (_input.LA(1)) {
@@ -1146,12 +1146,12 @@ public class LAParser extends Parser {
 				setState(217);
 				((Mais_variaveisContext)_localctx).variavel = variavel();
 				setState(218);
-				((Mais_variaveisContext)_localctx).f1 = mais_variaveis();
+				((Mais_variaveisContext)_localctx).maisVar = mais_variaveis();
 				 
-				         _localctx.nomes.addAll(((Mais_variaveisContext)_localctx).variavel.nomes); 
+				         _localctx.nomesVar.addAll(((Mais_variaveisContext)_localctx).variavel.listaVar); 
 				         ((Mais_variaveisContext)_localctx).tipoSimbolo = ((Mais_variaveisContext)_localctx).variavel.tipoSimbolo; 
 				         ((Mais_variaveisContext)_localctx).linha = ((Mais_variaveisContext)_localctx).variavel.linha; 
-				         _localctx.nomes.addAll(((Mais_variaveisContext)_localctx).f1.nomes);
+				         _localctx.nomesVar.addAll(((Mais_variaveisContext)_localctx).maisVar.nomesVar);
 				    
 				}
 				break;
@@ -1256,8 +1256,8 @@ public class LAParser extends Parser {
 
 	public static class Tipo_basico_identContext extends ParserRuleContext {
 		public String tipoSimbolo;
-		public Tipo_basicoContext v1;
-		public Token v2;
+		public Tipo_basicoContext tipoB;
+		public Token id;
 		public Tipo_basicoContext tipo_basico() {
 			return getRuleContext(Tipo_basicoContext.class,0);
 		}
@@ -1295,16 +1295,16 @@ public class LAParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(234);
-				((Tipo_basico_identContext)_localctx).v1 = tipo_basico();
-				((Tipo_basico_identContext)_localctx).tipoSimbolo =  ((Tipo_basico_identContext)_localctx).v1.tipoSimbolo;
+				((Tipo_basico_identContext)_localctx).tipoB = tipo_basico();
+				((Tipo_basico_identContext)_localctx).tipoSimbolo =  ((Tipo_basico_identContext)_localctx).tipoB.tipoSimbolo;
 				}
 				break;
 			case IDENT:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(237);
-				((Tipo_basico_identContext)_localctx).v2 = match(IDENT);
-				((Tipo_basico_identContext)_localctx).tipoSimbolo =  ((Tipo_basico_identContext)_localctx).v2.getText();
+				((Tipo_basico_identContext)_localctx).id = match(IDENT);
+				((Tipo_basico_identContext)_localctx).tipoSimbolo =  ((Tipo_basico_identContext)_localctx).id.getText();
 				}
 				break;
 			default:
@@ -1324,7 +1324,7 @@ public class LAParser extends Parser {
 
 	public static class Tipo_estendidoContext extends ParserRuleContext {
 		public String tipoSimbolo;
-		public Tipo_basico_identContext v1;
+		public Tipo_basico_identContext tipoBasicoID;
 		public Ponteiros_opcionaisContext ponteiros_opcionais() {
 			return getRuleContext(Ponteiros_opcionaisContext.class,0);
 		}
@@ -1360,8 +1360,8 @@ public class LAParser extends Parser {
 			setState(241);
 			ponteiros_opcionais();
 			setState(242);
-			((Tipo_estendidoContext)_localctx).v1 = tipo_basico_ident();
-			((Tipo_estendidoContext)_localctx).tipoSimbolo =  ((Tipo_estendidoContext)_localctx).v1.tipoSimbolo;
+			((Tipo_estendidoContext)_localctx).tipoBasicoID = tipo_basico_ident();
+			((Tipo_estendidoContext)_localctx).tipoSimbolo =  ((Tipo_estendidoContext)_localctx).tipoBasicoID.tipoSimbolo;
 			}
 		}
 		catch (RecognitionException re) {
@@ -1428,9 +1428,9 @@ public class LAParser extends Parser {
 	}
 
 	public static class RegistroContext extends ParserRuleContext {
-		public String nome_registro;
-		public String typeRegistro;
-		public List<String> nomes;
+		public String nomeRegistro;
+		public String tipoRegistro;
+		public List<String> nomesVar;
 		public VariavelContext variavel;
 		public Mais_variaveisContext mais_variaveis;
 		public TerminalNode REGISTRO() { return getToken(LAParser.REGISTRO, 0); }
@@ -1442,9 +1442,9 @@ public class LAParser extends Parser {
 		}
 		public TerminalNode FIM_REGISTRO() { return getToken(LAParser.FIM_REGISTRO, 0); }
 		public RegistroContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public RegistroContext(ParserRuleContext parent, int invokingState, String nome_registro) {
+		public RegistroContext(ParserRuleContext parent, int invokingState, String nomeRegistro) {
 			super(parent, invokingState);
-			this.nome_registro = nome_registro;
+			this.nomeRegistro = nomeRegistro;
 		}
 		@Override public int getRuleIndex() { return RULE_registro; }
 		@Override
@@ -1462,44 +1462,53 @@ public class LAParser extends Parser {
 		}
 	}
 
-	public final RegistroContext registro(String nome_registro) throws RecognitionException {
-		RegistroContext _localctx = new RegistroContext(_ctx, getState(), nome_registro);
+	public final RegistroContext registro(String nomeRegistro) throws RecognitionException {
+		RegistroContext _localctx = new RegistroContext(_ctx, getState(), nomeRegistro);
 		enterRule(_localctx, 34, RULE_registro);
-		((RegistroContext)_localctx).nomes =  new ArrayList<String>();
+		((RegistroContext)_localctx).nomesVar =  new ArrayList<String>();
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(247);
 			match(REGISTRO);
 
+			        /*Quando um registro é declarado empilha-se uma nova tabela de simbolos de registro*/
 			        pilhaDeTabelas.empilhar(new TabelaDeSimbolos("registro"));
-			        if(!_localctx.nome_registro.equals(""))
-			            tabelaRegistros.empilhar(new TabelaDeSimbolos(_localctx.nome_registro));
-			        else
+			        /*Aqui verifica-se se o nome do registro não é vazio*/
+			        if(!_localctx.nomeRegistro.equals("")){
+			            /* se não for empilha na tabela de registros uma nova tabela de simbolo associada ao registro,
+			            ou seja, a tabela de registros guarda todos os registros declarados e os nomes associados a cada um deles*/
+			            tabelaRegistros.empilhar(new TabelaDeSimbolos(_localctx.nomeRegistro));
+			        }else{
+			            /*Se o nome de registro é vazio então cria-se uma tabela de registro com nome registro padrao*/
 			            tabelaRegistros.empilhar(new TabelaDeSimbolos("registro"));
+			        }
 			    
 			setState(249);
 			((RegistroContext)_localctx).variavel = variavel();
 			setState(250);
 			((RegistroContext)_localctx).mais_variaveis = mais_variaveis();
 
-			        for (String s : ((RegistroContext)_localctx).variavel.nomes)
+			        /*Percorremos todas as variaveis declaradas juntas
+			        Quem vai auxiliar nessa regra é a regra mais_variaveis que retornará uma lista de nomes, linha e tipo*/
+			        for (String s : ((RegistroContext)_localctx).variavel.listaVar)
 			        {
+			            //adiciona o simbolo na tabela de registros
 			            tabelaRegistros.topo().adicionarSimbolo(s, ((RegistroContext)_localctx).variavel.tipoSimbolo);
-			            _localctx.nomes.add(s);
+			            _localctx.nomesVar.add(s);
 			        }
-			        for (String u : ((RegistroContext)_localctx).mais_variaveis.nomes)
+			        for (String u : ((RegistroContext)_localctx).mais_variaveis.nomesVar)
 			        {
-			            //msg_error+=u+"\n";
 			            tabelaRegistros.topo().adicionarSimbolo(u, ((RegistroContext)_localctx).mais_variaveis.tipoSimbolo);
-			            _localctx.nomes.add(u);
+			            _localctx.nomesVar.add(u);
 			        }
 			        
-			        ((RegistroContext)_localctx).typeRegistro = ((RegistroContext)_localctx).variavel.tipoSimbolo;
+			        ((RegistroContext)_localctx).tipoRegistro = ((RegistroContext)_localctx).variavel.tipoSimbolo;
 			    
 			setState(252);
 			match(FIM_REGISTRO);
 
+			        //ao final do registro desempilha-se a tabela
 			        pilhaDeTabelas.desempilhar();
 			    
 			}
@@ -1516,8 +1525,8 @@ public class LAParser extends Parser {
 	}
 
 	public static class Declaracao_globalContext extends ParserRuleContext {
-		public Token v1;
-		public Tipo_estendidoContext g1;
+		public Token id;
+		public Tipo_estendidoContext tipoExt;
 		public TerminalNode PROCEDIMENTO() { return getToken(LAParser.PROCEDIMENTO, 0); }
 		public TerminalNode ABRE_PARENTESIS() { return getToken(LAParser.ABRE_PARENTESIS, 0); }
 		public Parametros_opcionalContext parametros_opcional() {
@@ -1569,13 +1578,16 @@ public class LAParser extends Parser {
 				setState(255);
 				match(PROCEDIMENTO);
 				setState(256);
-				((Declaracao_globalContext)_localctx).v1 = match(IDENT);
+				((Declaracao_globalContext)_localctx).id = match(IDENT);
 
-				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_globalContext)_localctx).v1.getText()))
-				            msg_error += "Linha " + ((Declaracao_globalContext)_localctx).v1.getLine() + ": identificador "+((Declaracao_globalContext)_localctx).v1.getText()+" ja declarado anteriormente\n" ;
-				        else
-				        {
-				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_globalContext)_localctx).v1.getText(), "procedimento");
+				       /*Verifica-se se já não foi declarado um identificador com mesmo nome*/
+				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_globalContext)_localctx).id.getText())){
+				         /*Se foi, emite-se um erro*/
+				            msg_error += "Linha " + ((Declaracao_globalContext)_localctx).id.getLine() + ": identificador "+((Declaracao_globalContext)_localctx).id.getText()+" ja declarado anteriormente\n" ;
+				        }else{
+				            /*Se o identificador é valido então coloca-se o procedimento na pilha de tabelas*/
+				            pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_globalContext)_localctx).id.getText(), "procedimento");
+				            /*E empilha-se uma nova tabela de simbolos associada ao procedimento*/
 				            pilhaDeTabelas.empilhar(new TabelaDeSimbolos("procedimento"));
 				        }
 				       
@@ -1593,8 +1605,9 @@ public class LAParser extends Parser {
 				setState(263);
 				match(FIM_PROCEDIMENTO);
 				    
+				        /*Ao final da declaracao do procedimento, desempilha-se da pilha de tabelas*/
 				        pilhaDeTabelas.desempilhar();
-				    
+				      
 				}
 				break;
 			case FUNCAO:
@@ -1603,10 +1616,10 @@ public class LAParser extends Parser {
 				setState(266);
 				match(FUNCAO);
 				setState(267);
-				((Declaracao_globalContext)_localctx).v1 = match(IDENT);
+				((Declaracao_globalContext)_localctx).id = match(IDENT);
 
-				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_globalContext)_localctx).v1.getText()))
-				            msg_error += "Linha " + ((Declaracao_globalContext)_localctx).v1.getLine() + ": identificador "+((Declaracao_globalContext)_localctx).v1.getText()+" ja declarado anteriormente\n" ;
+				        if(pilhaDeTabelas.topo().existeSimbolo(((Declaracao_globalContext)_localctx).id.getText()))
+				            msg_error += "Linha " + ((Declaracao_globalContext)_localctx).id.getLine() + ": identificador "+((Declaracao_globalContext)_localctx).id.getText()+" ja declarado anteriormente\n" ;
 				        else
 				        {
 				            pilhaDeTabelas.empilhar(new TabelaDeSimbolos("funcao"));
@@ -1621,7 +1634,7 @@ public class LAParser extends Parser {
 				setState(272);
 				match(DOIS_PONTOS);
 				setState(273);
-				((Declaracao_globalContext)_localctx).g1 = tipo_estendido();
+				((Declaracao_globalContext)_localctx).tipoExt = tipo_estendido();
 				setState(274);
 				declaracoes_locais();
 				setState(275);
@@ -1630,9 +1643,10 @@ public class LAParser extends Parser {
 				match(FIM_FUNCAO);
 
 				        pilhaDeTabelas.desempilhar();
-				        pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_globalContext)_localctx).v1.getText(), ((Declaracao_globalContext)_localctx).g1.tipoSimbolo);
+				        /*é necessario empilhar um simbolo que é o nome da função no escopo atual*/
+				        pilhaDeTabelas.topo().adicionarSimbolo(((Declaracao_globalContext)_localctx).id.getText(), ((Declaracao_globalContext)_localctx).tipoExt.tipoSimbolo);
 				        
-				    
+				     
 				}
 				break;
 			default:
@@ -1703,11 +1717,13 @@ public class LAParser extends Parser {
 	}
 
 	public static class ParametroContext extends ParserRuleContext {
-		public IdentificadorContext v1;
-		public Mais_identContext v3;
-		public Tipo_estendidoContext v2;
+		public IdentificadorContext id;
+		public Tipo_estendidoContext tipoExt;
 		public Var_opcionalContext var_opcional() {
 			return getRuleContext(Var_opcionalContext.class,0);
+		}
+		public Mais_identContext mais_ident() {
+			return getRuleContext(Mais_identContext.class,0);
 		}
 		public TerminalNode DOIS_PONTOS() { return getToken(LAParser.DOIS_PONTOS, 0); }
 		public Mais_parametrosContext mais_parametros() {
@@ -1715,9 +1731,6 @@ public class LAParser extends Parser {
 		}
 		public IdentificadorContext identificador() {
 			return getRuleContext(IdentificadorContext.class,0);
-		}
-		public Mais_identContext mais_ident() {
-			return getRuleContext(Mais_identContext.class,0);
 		}
 		public Tipo_estendidoContext tipo_estendido() {
 			return getRuleContext(Tipo_estendidoContext.class,0);
@@ -1750,28 +1763,32 @@ public class LAParser extends Parser {
 			setState(284);
 			var_opcional();
 			setState(285);
-			((ParametroContext)_localctx).v1 = identificador();
+			((ParametroContext)_localctx).id = identificador();
 			setState(286);
-			((ParametroContext)_localctx).v3 = mais_ident();
+			mais_ident();
 			setState(287);
 			match(DOIS_PONTOS);
 			setState(288);
-			((ParametroContext)_localctx).v2 = tipo_estendido();
+			((ParametroContext)_localctx).tipoExt = tipo_estendido();
 			setState(289);
 			mais_parametros();
 
-			        if(pilhaDeTabelas.topo().existeSimbolo(((ParametroContext)_localctx).v1.txt))
-			            msg_error += "Linha " + ((ParametroContext)_localctx).v1.linha + ": identificador "+((ParametroContext)_localctx).v1.txt+" ja declarado anteriormente\n" ;
-			        else
-			        {
-			             pilhaDeTabelas.topo().adicionarSimbolo(((ParametroContext)_localctx).v1.txt, ((ParametroContext)_localctx).v2.tipoSimbolo);
-
-			             if(tabelaRegistros.existeTabela(((ParametroContext)_localctx).v2.tipoSimbolo)!=null)
+			        /*Verifica-se  se já existe um simbolo com mesmo nome declarado*/
+			        if(pilhaDeTabelas.topo().existeSimbolo(((ParametroContext)_localctx).id.nomeID)){
+			            /*Se existir é disparado um erro*/
+			            msg_error += "Linha " + ((ParametroContext)_localctx).id.linha + ": identificador "+((ParametroContext)_localctx).id.nomeID+" ja declarado anteriormente\n" ;
+			        }else{
+			              /*se não adiciona-se o simbolo juntamente com seu tipo na pilha de tabelas*/
+			             pilhaDeTabelas.topo().adicionarSimbolo(((ParametroContext)_localctx).id.nomeID, ((ParametroContext)_localctx).tipoExt.tipoSimbolo);
+			             /*se o tipo é um registro, fazemos as declarações adicionais na variavel*/
+			             if(tabelaRegistros.existeTabela(((ParametroContext)_localctx).tipoExt.tipoSimbolo)!=null)
 			             {
-			                 TabelaDeSimbolos tabela_registro = tabelaRegistros.existeTabela(((ParametroContext)_localctx).v2.tipoSimbolo);
-			                 for (String t : tabela_registro.getSimbolos())
+			                 /*Recupera a tabela associada*/
+			                 TabelaDeSimbolos tabela_registro = tabelaRegistros.existeTabela(((ParametroContext)_localctx).tipoExt.tipoSimbolo);
+			                 /*Pega todos os simbolos associados e adicionamos novamente a pilha de tabelas*/
+			                 for (String simbolos : tabela_registro.getSimbolos())
 			                 {
-			                     pilhaDeTabelas.topo().adicionarSimbolo(((ParametroContext)_localctx).v1.txt+t, ((ParametroContext)_localctx).v2.tipoSimbolo);
+			                     pilhaDeTabelas.topo().adicionarSimbolo(((ParametroContext)_localctx).id.nomeID+simbolos, ((ParametroContext)_localctx).tipoExt.tipoSimbolo);
 			                 }
 			             }
 			         }
@@ -1841,7 +1858,6 @@ public class LAParser extends Parser {
 	}
 
 	public static class Mais_parametrosContext extends ParserRuleContext {
-		public ParametroContext v1;
 		public TerminalNode VIRGULA() { return getToken(LAParser.VIRGULA, 0); }
 		public ParametroContext parametro() {
 			return getRuleContext(ParametroContext.class,0);
@@ -1879,7 +1895,7 @@ public class LAParser extends Parser {
 				setState(295);
 				match(VIRGULA);
 				setState(296);
-				((Mais_parametrosContext)_localctx).v1 = parametro();
+				parametro();
 				}
 			}
 
@@ -2066,14 +2082,14 @@ public class LAParser extends Parser {
 	}
 
 	public static class CmdContext extends ParserRuleContext {
-		public String tipoCmd;
-		public IdentificadorContext v10;
-		public Mais_identContext v11;
-		public Token v2;
-		public Outros_identContext v5;
-		public ExpressaoContext v6;
-		public Token v3;
-		public Token v4;
+		public String tipoComando;
+		public IdentificadorContext id;
+		public Mais_identContext maisID;
+		public Token idExp;
+		public Outros_identContext outrosId;
+		public ExpressaoContext exp;
+		public Token idCh;
+		public Token ret;
 		public TerminalNode LEIA() { return getToken(LAParser.LEIA, 0); }
 		public TerminalNode ABRE_PARENTESIS() { return getToken(LAParser.ABRE_PARENTESIS, 0); }
 		public TerminalNode FECHA_PARENTESIS() { return getToken(LAParser.FECHA_PARENTESIS, 0); }
@@ -2152,9 +2168,9 @@ public class LAParser extends Parser {
 	public final CmdContext cmd() throws RecognitionException {
 		CmdContext _localctx = new CmdContext(_ctx, getState());
 		enterRule(_localctx, 52, RULE_cmd);
-		((CmdContext)_localctx).tipoCmd = "";
+		((CmdContext)_localctx).tipoComando = "";
 		try {
-			setState(386);
+			setState(385);
 			switch (_input.LA(1)) {
 			case LEIA:
 				enterOuterAlt(_localctx, 1);
@@ -2164,21 +2180,32 @@ public class LAParser extends Parser {
 				setState(315);
 				match(ABRE_PARENTESIS);
 				setState(316);
-				((CmdContext)_localctx).v10 = identificador();
+				((CmdContext)_localctx).id = identificador();
 				setState(317);
-				((CmdContext)_localctx).v11 = mais_ident();
-				    
-				         if(!pilhaDeTabelas.existeSimbolo(((CmdContext)_localctx).v10.txt))
-				             msg_error+="Linha " + ((CmdContext)_localctx).v10.linha + ": identificador " + ((CmdContext)_localctx).v10.txt + " nao declarado\n";
-				         for (String s : ((CmdContext)_localctx).v11.nomes)
-				         {
-				             if(!pilhaDeTabelas.existeSimbolo(s))
-				                 msg_error+="Linha " + ((CmdContext)_localctx).v10.linha + ": identificador " + s + " nao declarado\n";
+				((CmdContext)_localctx).maisID = mais_ident();
+				 
+				         /*Verifica-se se existe o identificador usado no comando*/
+				         if(!pilhaDeTabelas.existeSimbolo(((CmdContext)_localctx).id.nomeID)){
+				             /*se não existe, então quer dizer que ele não pode ser usado pq não foi declarado
+				              então é adicionado um erro*/
+				             msg_error+="Linha " + ((CmdContext)_localctx).id.linha + ": identificador " + ((CmdContext)_localctx).id.nomeID + " nao declarado\n";
+				         }
+				         /*Caso exista então é valido usar então verificamos se as outras variaveis também existem
+				         porque de acordo com as regras da linguagem posso ler um valor atribuido a varias variaveis*/
+				         for (String nome : ((CmdContext)_localctx).maisID.nomesVar)
+				         {   
+				            /*Caso alguma variavel usada no comando leia não exista é emitido um erro*/
+				             if(!pilhaDeTabelas.existeSimbolo(nome)){
+				                 msg_error+="Linha " + ((CmdContext)_localctx).id.linha + ": identificador " + nome + " nao declarado\n";
+				            }
 				         }    
 				    
 				setState(319);
 				match(FECHA_PARENTESIS);
-				 ((CmdContext)_localctx).tipoCmd =  "leia"; 
+				  
+				        /*Atribuimos o tipo como leia*/
+				         ((CmdContext)_localctx).tipoComando =  "leia"; 
+				    
 				}
 				break;
 			case ESCREVA:
@@ -2194,7 +2221,10 @@ public class LAParser extends Parser {
 				mais_expressao();
 				setState(326);
 				match(FECHA_PARENTESIS);
-				((CmdContext)_localctx).tipoCmd = "escreva";
+
+				        /*Como não usamos nenhum identificador nessa regra, então só atibuimos o tipo do comando como 'escreva'*/
+				        ((CmdContext)_localctx).tipoComando = "escreva";
+				    
 				}
 				break;
 			case SE:
@@ -2212,7 +2242,10 @@ public class LAParser extends Parser {
 				senao_opcional();
 				setState(334);
 				match(FIM_SE);
-				 ((CmdContext)_localctx).tipoCmd =  "se"; 
+				 
+				        /*Como não usamos nenhum identificador nessa regra, então só atribuimos o tipo do comando como 'se'*/
+				        ((CmdContext)_localctx).tipoComando =  "se"; 
+				    
 				}
 				break;
 			case CASO:
@@ -2230,7 +2263,10 @@ public class LAParser extends Parser {
 				senao_opcional();
 				setState(342);
 				match(FIM_CASO);
-				 ((CmdContext)_localctx).tipoCmd =  "caso"; 
+				 
+				        /*Como não usamos nenhum identificador nessa regra, então só atribuimos o tipo do comando como 'caso'*/
+				        ((CmdContext)_localctx).tipoComando =  "caso"; 
+				    
 				}
 				break;
 			case PARA:
@@ -2254,7 +2290,10 @@ public class LAParser extends Parser {
 				comandos();
 				setState(353);
 				match(FIM_PARA);
-				 ((CmdContext)_localctx).tipoCmd =  "para"; 
+				 
+				        
+				        ((CmdContext)_localctx).tipoComando =  "para"; 
+				    
 				}
 				break;
 			case ENQUANTO:
@@ -2270,7 +2309,10 @@ public class LAParser extends Parser {
 				comandos();
 				setState(360);
 				match(FIM_ENQUANTO);
-				 ((CmdContext)_localctx).tipoCmd =  "enquanto"; 
+				 
+				        /*Como não usamos nenhum identificador nessa regra, então só atribuimos o tipo do comando como 'enquanto'*/
+				        ((CmdContext)_localctx).tipoComando =  "enquanto"; 
+				    
 				}
 				break;
 			case FACA:
@@ -2284,7 +2326,10 @@ public class LAParser extends Parser {
 				match(ATE);
 				setState(366);
 				expressao();
-				 ((CmdContext)_localctx).tipoCmd =  "faca"; 
+
+				        /*Como não usamos nenhum identificador nessa regra, então só atribuimos o tipo do comando como 'faca'*/
+				        ((CmdContext)_localctx).tipoComando =  "faca"; 
+				    
 				}
 				break;
 			case EXPOENTE:
@@ -2293,52 +2338,58 @@ public class LAParser extends Parser {
 				setState(369);
 				match(EXPOENTE);
 				setState(370);
-				((CmdContext)_localctx).v2 = match(IDENT);
+				((CmdContext)_localctx).idExp = match(IDENT);
 				setState(371);
-				((CmdContext)_localctx).v5 = outros_ident();
+				((CmdContext)_localctx).outrosId = outros_ident();
 				setState(372);
 				dimensao();
 				setState(373);
 				match(ATRIBUICAO);
 				setState(374);
-				((CmdContext)_localctx).v6 = expressao();
-				 ((CmdContext)_localctx).tipoCmd =  "expoente"; 
-
-				        String tipo_expressao = ((CmdContext)_localctx).v6.tipoSimbolo;
-				        String tipo_ident = pilhaDeTabelas.topo().GetTipoSimbolo(((CmdContext)_localctx).v2.getText());
+				((CmdContext)_localctx).exp = expressao();
+				 
+				        /*Como usanmos o identificador, enão devemos tratá-lo*/
+				        ((CmdContext)_localctx).tipoComando =  "expoente"; 
+				        /*verificamos qual o tipo da expressao*/
+				        String tipo_expressao = ((CmdContext)_localctx).exp.tipoSimbolo;
+				        /*verificamos qual o tipo do identificador*/
+				        String tipo_ident = pilhaDeTabelas.topo().getTipoSimbolo(((CmdContext)_localctx).idExp.getText());
+				        /*Se o tipo da expressão não for compativel com o tipo do identificador então emite-se um erro*/
 				        if(!tipo_expressao.equals(tipo_ident))
-				            msg_error+="Linha " + ((CmdContext)_localctx).v2.getLine() + ": atribuicao nao compativel para ^" + ((CmdContext)_localctx).v2.getText()+((CmdContext)_localctx).v5.txt + "\n";
-				       
+				            msg_error+="Linha " + ((CmdContext)_localctx).idExp.getLine() + ": atribuicao nao compativel para ^" + ((CmdContext)_localctx).idExp.getText()+((CmdContext)_localctx).outrosId.txt + "\n";
 				    
 				}
 				break;
 			case IDENT:
 				enterOuterAlt(_localctx, 9);
 				{
+				setState(377);
+				((CmdContext)_localctx).idCh = match(IDENT);
 				setState(378);
-				((CmdContext)_localctx).v3 = match(IDENT);
-				setState(379);
-				chamada_atribuicao((((CmdContext)_localctx).v3!=null?((CmdContext)_localctx).v3.getText():null));
+				chamada_atribuicao((((CmdContext)_localctx).idCh!=null?((CmdContext)_localctx).idCh.getText():null));
 
-				          if(!pilhaDeTabelas.existeSimbolo(((CmdContext)_localctx).v3.getText()))
-				              msg_error+="Linha " + ((CmdContext)_localctx).v3.getLine() + ": identificador " + ((CmdContext)_localctx).v3.getText() + " nao declarado\n";
-				          //Verificação para ver se o simbolo já foi declarado anteriormente.
-
-				      
+				          /*Verificação se existe o identificador, se não existir emite-se um erro*/
+				          if(!pilhaDeTabelas.existeSimbolo(((CmdContext)_localctx).idCh.getText())){
+				              msg_error+="Linha " + ((CmdContext)_localctx).idCh.getLine() + ": identificador " + ((CmdContext)_localctx).idCh.getText() + " nao declarado\n";
+				          }
+				       
 				}
 				break;
 			case RETORNE:
 				enterOuterAlt(_localctx, 10);
 				{
+				setState(381);
+				((CmdContext)_localctx).ret = match(RETORNE);
 				setState(382);
-				((CmdContext)_localctx).v4 = match(RETORNE);
-				setState(383);
 				expressao();
 
+				        /*Aqui fazemos o tratamento do retorne nas funcoes*/
+				        /*Primeiro pegamos o escopo atual*/
 				        String escopoAtual=pilhaDeTabelas.topo().getEscopo();
+				        /*Depois verificamos se o escopo atual é funcao, se não for função então o comando não pode ser usado nesse escopo
+				        então emite-se um erro*/
 				        if(escopoAtual.equals("funcao")==false){
-				            msg_error+="Linha " + ((CmdContext)_localctx).v4.getLine() + ": comando retorne nao permitido nesse escopo\n";
-				      
+				            msg_error+="Linha " + ((CmdContext)_localctx).ret.getLine() + ": comando retorne nao permitido nesse escopo\n";
 				        }
 				      
 				}
@@ -2360,8 +2411,8 @@ public class LAParser extends Parser {
 
 	public static class Mais_expressaoContext extends ParserRuleContext {
 		public String tipoSimbolo;
-		public ExpressaoContext v1;
-		public Mais_expressaoContext v2;
+		public ExpressaoContext exp;
+		public Mais_expressaoContext maisExp;
 		public TerminalNode VIRGULA() { return getToken(LAParser.VIRGULA, 0); }
 		public ExpressaoContext expressao() {
 			return getRuleContext(ExpressaoContext.class,0);
@@ -2391,28 +2442,28 @@ public class LAParser extends Parser {
 	public final Mais_expressaoContext mais_expressao() throws RecognitionException {
 		Mais_expressaoContext _localctx = new Mais_expressaoContext(_ctx, getState());
 		enterRule(_localctx, 54, RULE_mais_expressao);
-		((Mais_expressaoContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Mais_expressaoContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
-			setState(394);
+			setState(393);
 			switch (_input.LA(1)) {
 			case VIRGULA:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(388);
+				setState(387);
 				match(VIRGULA);
+				setState(388);
+				((Mais_expressaoContext)_localctx).exp = expressao();
 				setState(389);
-				((Mais_expressaoContext)_localctx).v1 = expressao();
-				setState(390);
-				((Mais_expressaoContext)_localctx).v2 = mais_expressao();
+				((Mais_expressaoContext)_localctx).maisExp = mais_expressao();
 
-				     if(((Mais_expressaoContext)_localctx).v2.tipoSimbolo.equals("SEM_TIPO"))
-				        ((Mais_expressaoContext)_localctx).tipoSimbolo = ((Mais_expressaoContext)_localctx).v1.tipoSimbolo;
-				     else
-				     {
-				      if(((Mais_expressaoContext)_localctx).v1.tipoSimbolo.equals(((Mais_expressaoContext)_localctx).v2.tipoSimbolo) || ((Mais_expressaoContext)_localctx).v1.tipoSimbolo.equals("inteiro") && ((Mais_expressaoContext)_localctx).v2.tipoSimbolo.equals("real") || ((Mais_expressaoContext)_localctx).v1.tipoSimbolo.equals("real") && ((Mais_expressaoContext)_localctx).v2.tipoSimbolo.equals("inteiro"))
-				          ((Mais_expressaoContext)_localctx).tipoSimbolo = ((Mais_expressaoContext)_localctx).v1.tipoSimbolo;
-				      else
+				     if(((Mais_expressaoContext)_localctx).maisExp.tipoSimbolo.equals("TIPO_NAO_DECLARADO"))
+				        ((Mais_expressaoContext)_localctx).tipoSimbolo = ((Mais_expressaoContext)_localctx).exp.tipoSimbolo;
+				     else{
+				      if(((Mais_expressaoContext)_localctx).exp.tipoSimbolo.equals(((Mais_expressaoContext)_localctx).maisExp.tipoSimbolo) || ((Mais_expressaoContext)_localctx).exp.tipoSimbolo.equals("inteiro") && ((Mais_expressaoContext)_localctx).maisExp.tipoSimbolo.equals("real") || ((Mais_expressaoContext)_localctx).exp.tipoSimbolo.equals("real") && ((Mais_expressaoContext)_localctx).maisExp.tipoSimbolo.equals("inteiro")){
+				          ((Mais_expressaoContext)_localctx).tipoSimbolo = ((Mais_expressaoContext)_localctx).exp.tipoSimbolo;
+				       }else{
 				          ((Mais_expressaoContext)_localctx).tipoSimbolo = "incompativel";
+				      }
 				     }
 				    
 				}
@@ -2468,13 +2519,13 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(398);
+			setState(397);
 			_la = _input.LA(1);
 			if (_la==SENAO) {
 				{
-				setState(396);
+				setState(395);
 				match(SENAO);
-				setState(397);
+				setState(396);
 				comandos();
 				}
 			}
@@ -2494,10 +2545,10 @@ public class LAParser extends Parser {
 
 	public static class Chamada_atribuicaoContext extends ParserRuleContext {
 		public String primeiroIdent;
-		public Outros_identContext v1;
-		public DimensaoContext d1;
-		public Token v2;
-		public ExpressaoContext e1;
+		public Outros_identContext id;
+		public DimensaoContext dimen;
+		public Token atr;
+		public ExpressaoContext exp;
 		public TerminalNode ABRE_PARENTESIS() { return getToken(LAParser.ABRE_PARENTESIS, 0); }
 		public Argumentos_opcionalContext argumentos_opcional() {
 			return getRuleContext(Argumentos_opcionalContext.class,0);
@@ -2538,16 +2589,16 @@ public class LAParser extends Parser {
 		Chamada_atribuicaoContext _localctx = new Chamada_atribuicaoContext(_ctx, getState(), primeiroIdent);
 		enterRule(_localctx, 58, RULE_chamada_atribuicao);
 		try {
-			setState(410);
+			setState(409);
 			switch (_input.LA(1)) {
 			case ABRE_PARENTESIS:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(400);
+				setState(399);
 				match(ABRE_PARENTESIS);
-				setState(401);
+				setState(400);
 				argumentos_opcional();
-				setState(402);
+				setState(401);
 				match(FECHA_PARENTESIS);
 				}
 				break;
@@ -2556,24 +2607,25 @@ public class LAParser extends Parser {
 			case ATRIBUICAO:
 				enterOuterAlt(_localctx, 2);
 				{
+				setState(403);
+				((Chamada_atribuicaoContext)_localctx).id = outros_ident();
 				setState(404);
-				((Chamada_atribuicaoContext)_localctx).v1 = outros_ident();
+				((Chamada_atribuicaoContext)_localctx).dimen = dimensao();
 				setState(405);
-				((Chamada_atribuicaoContext)_localctx).d1 = dimensao();
+				((Chamada_atribuicaoContext)_localctx).atr = match(ATRIBUICAO);
 				setState(406);
-				((Chamada_atribuicaoContext)_localctx).v2 = match(ATRIBUICAO);
-				setState(407);
-				((Chamada_atribuicaoContext)_localctx).e1 = expressao();
+				((Chamada_atribuicaoContext)_localctx).exp = expressao();
 
-				        if(pilhaDeTabelas.existeSimbolo(_localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).v1.txt))
+				        if(pilhaDeTabelas.existeSimbolo(_localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).id.txt))
 				        {
-				            String tipo1 = pilhaDeTabelas.topo().GetTipoSimbolo(_localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).v1.txt);
-				            String tipo2 = ((Chamada_atribuicaoContext)_localctx).e1.tipoSimbolo;
-				            if(tipo1.equals(tipo2) || tipo1.equals("inteiro") && tipo2.equals("real") || tipo1.equals("real") && tipo2.equals("inteiro"))
-				            {
+				            String tipo1 = pilhaDeTabelas.topo().getTipoSimbolo(_localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).id.txt);
+				            String tipo2 = ((Chamada_atribuicaoContext)_localctx).exp.tipoSimbolo;
+				            if(!(tipo1.equals(tipo2) || tipo1.equals("inteiro") && tipo2.equals("real") || tipo1.equals("real") && tipo2.equals("inteiro"))){
+				                msg_error+="Linha " + ((Chamada_atribuicaoContext)_localctx).atr.getLine() + ": atribuicao nao compativel para " + _localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).id.txt+((Chamada_atribuicaoContext)_localctx).dimen.txt +"\n";
 				            }
-				            else
-				                msg_error+="Linha " + ((Chamada_atribuicaoContext)_localctx).v2.getLine() + ": atribuicao nao compativel para " + _localctx.primeiroIdent+((Chamada_atribuicaoContext)_localctx).v1.txt+((Chamada_atribuicaoContext)_localctx).d1.txt +"\n";
+				                
+				        }else{
+				             msg_error+="Linha " + ((Chamada_atribuicaoContext)_localctx).atr.getLine() + ": identificador " + ((Chamada_atribuicaoContext)_localctx).atr.getText() + " nao declarado\n";
 				        }
 				     
 				    
@@ -2627,13 +2679,13 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(415);
+			setState(414);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EXPOENTE) | (1L << VERDADEIRO) | (1L << FALSO) | (1L << ABRE_PARENTESIS) | (1L << NAO) | (1L << SUBTRACAO) | (1L << OP_AND) | (1L << CADEIA) | (1L << IDENT) | (1L << N_INTEIRO) | (1L << N_REAL))) != 0)) {
 				{
-				setState(412);
+				setState(411);
 				expressao();
-				setState(413);
+				setState(412);
 				mais_expressao();
 				}
 			}
@@ -2687,13 +2739,13 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(417);
+			setState(416);
 			constantes();
-			setState(418);
+			setState(417);
 			match(DOIS_PONTOS);
-			setState(419);
+			setState(418);
 			comandos();
-			setState(420);
+			setState(419);
 			mais_selecao();
 			}
 		}
@@ -2738,11 +2790,11 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(423);
+			setState(422);
 			_la = _input.LA(1);
 			if (_la==SUBTRACAO || _la==N_INTEIRO) {
 				{
-				setState(422);
+				setState(421);
 				selecao();
 				}
 			}
@@ -2792,9 +2844,9 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(425);
+			setState(424);
 			numero_intervalo();
-			setState(426);
+			setState(425);
 			mais_constantes();
 			}
 		}
@@ -2840,13 +2892,13 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(430);
+			setState(429);
 			_la = _input.LA(1);
 			if (_la==VIRGULA) {
 				{
-				setState(428);
+				setState(427);
 				match(VIRGULA);
-				setState(429);
+				setState(428);
 				constantes();
 				}
 			}
@@ -2897,11 +2949,11 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(432);
+			setState(431);
 			op_unario();
-			setState(433);
+			setState(432);
 			match(N_INTEIRO);
-			setState(434);
+			setState(433);
 			intervalo_opcional();
 			}
 		}
@@ -2948,15 +3000,15 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(440);
+			setState(439);
 			_la = _input.LA(1);
 			if (_la==PONTO_PONTO) {
 				{
-				setState(436);
+				setState(435);
 				match(PONTO_PONTO);
-				setState(437);
+				setState(436);
 				op_unario();
-				setState(438);
+				setState(437);
 				match(N_INTEIRO);
 				}
 			}
@@ -3002,11 +3054,11 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(443);
+			setState(442);
 			_la = _input.LA(1);
 			if (_la==SUBTRACAO) {
 				{
-				setState(442);
+				setState(441);
 				match(SUBTRACAO);
 				}
 			}
@@ -3027,8 +3079,8 @@ public class LAParser extends Parser {
 	public static class Exp_aritmeticaContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public TermoContext v1;
-		public Outros_termosContext v2;
+		public TermoContext termo1;
+		public Outros_termosContext termo2;
 		public TermoContext termo() {
 			return getRuleContext(TermoContext.class,0);
 		}
@@ -3057,22 +3109,22 @@ public class LAParser extends Parser {
 	public final Exp_aritmeticaContext exp_aritmetica() throws RecognitionException {
 		Exp_aritmeticaContext _localctx = new Exp_aritmeticaContext(_ctx, getState());
 		enterRule(_localctx, 76, RULE_exp_aritmetica);
-		((Exp_aritmeticaContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Exp_aritmeticaContext)_localctx).txt = "";
+		((Exp_aritmeticaContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Exp_aritmeticaContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(444);
+			((Exp_aritmeticaContext)_localctx).termo1 = termo();
 			setState(445);
-			((Exp_aritmeticaContext)_localctx).v1 = termo();
-			setState(446);
-			((Exp_aritmeticaContext)_localctx).v2 = outros_termos();
+			((Exp_aritmeticaContext)_localctx).termo2 = outros_termos();
 
-			        ((Exp_aritmeticaContext)_localctx).txt = ((Exp_aritmeticaContext)_localctx).v1.txt;
-			        if(((Exp_aritmeticaContext)_localctx).v2.tipoSimbolo.equals("SEM_TIPO"))
-			            ((Exp_aritmeticaContext)_localctx).tipoSimbolo = ((Exp_aritmeticaContext)_localctx).v1.tipoSimbolo;
+			        ((Exp_aritmeticaContext)_localctx).txt = ((Exp_aritmeticaContext)_localctx).termo1.txt;
+			        if(((Exp_aritmeticaContext)_localctx).termo2.tipoSimbolo.equals("TIPO_NAO_DECLARADO"))
+			            ((Exp_aritmeticaContext)_localctx).tipoSimbolo = ((Exp_aritmeticaContext)_localctx).termo1.tipoSimbolo;
 			        else
 			        {
-			            if(((Exp_aritmeticaContext)_localctx).v1.tipoSimbolo.equals(((Exp_aritmeticaContext)_localctx).v2.tipoSimbolo) || ((Exp_aritmeticaContext)_localctx).v1.tipoSimbolo.equals("inteiro") && ((Exp_aritmeticaContext)_localctx).v2.tipoSimbolo.equals("real") || ((Exp_aritmeticaContext)_localctx).v1.tipoSimbolo.equals("real") && ((Exp_aritmeticaContext)_localctx).v2.tipoSimbolo.equals("inteiro"))
-			                ((Exp_aritmeticaContext)_localctx).tipoSimbolo = ((Exp_aritmeticaContext)_localctx).v1.tipoSimbolo;
+			            if(((Exp_aritmeticaContext)_localctx).termo1.tipoSimbolo.equals(((Exp_aritmeticaContext)_localctx).termo2.tipoSimbolo) || ((Exp_aritmeticaContext)_localctx).termo1.tipoSimbolo.equals("inteiro") && ((Exp_aritmeticaContext)_localctx).termo2.tipoSimbolo.equals("real") || ((Exp_aritmeticaContext)_localctx).termo1.tipoSimbolo.equals("real") && ((Exp_aritmeticaContext)_localctx).termo2.tipoSimbolo.equals("inteiro"))
+			                ((Exp_aritmeticaContext)_localctx).tipoSimbolo = ((Exp_aritmeticaContext)_localctx).termo1.tipoSimbolo;
 			            else
 			                ((Exp_aritmeticaContext)_localctx).tipoSimbolo = "incompativel";
 			        }   
@@ -3119,7 +3171,7 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(449);
+			setState(448);
 			_la = _input.LA(1);
 			if ( !(_la==MULTIPLICACAO || _la==DIVISAO) ) {
 			_errHandler.recoverInline(this);
@@ -3168,7 +3220,7 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(451);
+			setState(450);
 			_la = _input.LA(1);
 			if ( !(_la==SOMA || _la==SUBTRACAO) ) {
 			_errHandler.recoverInline(this);
@@ -3191,7 +3243,7 @@ public class LAParser extends Parser {
 	public static class TermoContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public FatorContext v1;
+		public FatorContext fat;
 		public Outros_fatoresContext outros_fatores() {
 			return getRuleContext(Outros_fatoresContext.class,0);
 		}
@@ -3220,17 +3272,17 @@ public class LAParser extends Parser {
 	public final TermoContext termo() throws RecognitionException {
 		TermoContext _localctx = new TermoContext(_ctx, getState());
 		enterRule(_localctx, 82, RULE_termo);
-		((TermoContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((TermoContext)_localctx).txt = "";
+		((TermoContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((TermoContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(452);
+			((TermoContext)_localctx).fat = fator();
 			setState(453);
-			((TermoContext)_localctx).v1 = fator();
-			setState(454);
 			outros_fatores();
 			 
-			        ((TermoContext)_localctx).tipoSimbolo = ((TermoContext)_localctx).v1.tipoSimbolo; 
-			        ((TermoContext)_localctx).txt = ((TermoContext)_localctx).v1.txt;
+			        ((TermoContext)_localctx).tipoSimbolo = ((TermoContext)_localctx).fat.tipoSimbolo; 
+			        ((TermoContext)_localctx).txt = ((TermoContext)_localctx).fat.txt;
 			    
 			}
 		}
@@ -3247,8 +3299,8 @@ public class LAParser extends Parser {
 
 	public static class Outros_termosContext extends ParserRuleContext {
 		public String tipoSimbolo;
-		public TermoContext v1;
-		public Outros_termosContext v2;
+		public TermoContext termo1;
+		public Outros_termosContext termo2;
 		public Op_adicaoContext op_adicao() {
 			return getRuleContext(Op_adicaoContext.class,0);
 		}
@@ -3280,27 +3332,27 @@ public class LAParser extends Parser {
 	public final Outros_termosContext outros_termos() throws RecognitionException {
 		Outros_termosContext _localctx = new Outros_termosContext(_ctx, getState());
 		enterRule(_localctx, 84, RULE_outros_termos);
-		((Outros_termosContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Outros_termosContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
-			setState(463);
+			setState(462);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(457);
+				setState(456);
 				op_adicao();
+				setState(457);
+				((Outros_termosContext)_localctx).termo1 = termo();
 				setState(458);
-				((Outros_termosContext)_localctx).v1 = termo();
-				setState(459);
-				((Outros_termosContext)_localctx).v2 = outros_termos();
+				((Outros_termosContext)_localctx).termo2 = outros_termos();
 
-				        if(((Outros_termosContext)_localctx).v2.tipoSimbolo.equals("SEM_TIPO"))
-				            ((Outros_termosContext)_localctx).tipoSimbolo = ((Outros_termosContext)_localctx).v1.tipoSimbolo;
+				        if(((Outros_termosContext)_localctx).termo2.tipoSimbolo.equals("TIPO_NAO_DECLARADO"))
+				            ((Outros_termosContext)_localctx).tipoSimbolo = ((Outros_termosContext)_localctx).termo1.tipoSimbolo;
 				        else
 				        {
-				            if(((Outros_termosContext)_localctx).v1.tipoSimbolo.equals(((Outros_termosContext)_localctx).v2.tipoSimbolo) || ((Outros_termosContext)_localctx).v1.tipoSimbolo.equals("inteiro") && ((Outros_termosContext)_localctx).v2.tipoSimbolo.equals("real") || ((Outros_termosContext)_localctx).v1.tipoSimbolo.equals("real") && ((Outros_termosContext)_localctx).v2.tipoSimbolo.equals("inteiro"))
-				                ((Outros_termosContext)_localctx).tipoSimbolo = ((Outros_termosContext)_localctx).v1.tipoSimbolo;
+				            if(((Outros_termosContext)_localctx).termo1.tipoSimbolo.equals(((Outros_termosContext)_localctx).termo2.tipoSimbolo) || ((Outros_termosContext)_localctx).termo1.tipoSimbolo.equals("inteiro") && ((Outros_termosContext)_localctx).termo2.tipoSimbolo.equals("real") || ((Outros_termosContext)_localctx).termo1.tipoSimbolo.equals("real") && ((Outros_termosContext)_localctx).termo2.tipoSimbolo.equals("inteiro"))
+				                ((Outros_termosContext)_localctx).tipoSimbolo = ((Outros_termosContext)_localctx).termo1.tipoSimbolo;
 				            else
 				                ((Outros_termosContext)_localctx).tipoSimbolo = "incompativel";
 				        }
@@ -3328,7 +3380,7 @@ public class LAParser extends Parser {
 	public static class FatorContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public ParcelaContext v1;
+		public ParcelaContext parc;
 		public Outras_parcelasContext outras_parcelas() {
 			return getRuleContext(Outras_parcelasContext.class,0);
 		}
@@ -3357,17 +3409,17 @@ public class LAParser extends Parser {
 	public final FatorContext fator() throws RecognitionException {
 		FatorContext _localctx = new FatorContext(_ctx, getState());
 		enterRule(_localctx, 86, RULE_fator);
-		((FatorContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((FatorContext)_localctx).txt = "";
+		((FatorContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((FatorContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(464);
+			((FatorContext)_localctx).parc = parcela();
 			setState(465);
-			((FatorContext)_localctx).v1 = parcela();
-			setState(466);
 			outras_parcelas();
 
-			        ((FatorContext)_localctx).tipoSimbolo = ((FatorContext)_localctx).v1.tipoSimbolo; 
-			        ((FatorContext)_localctx).txt = ((FatorContext)_localctx).v1.txt;
+			        ((FatorContext)_localctx).tipoSimbolo = ((FatorContext)_localctx).parc.tipoSimbolo; 
+			        ((FatorContext)_localctx).txt = ((FatorContext)_localctx).parc.txt;
 			    
 			}
 		}
@@ -3421,19 +3473,19 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(474);
+			setState(473);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==MULTIPLICACAO || _la==DIVISAO) {
 				{
 				{
-				setState(469);
+				setState(468);
 				op_multiplicacao();
-				setState(470);
+				setState(469);
 				fator();
 				}
 				}
-				setState(476);
+				setState(475);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3453,8 +3505,8 @@ public class LAParser extends Parser {
 	public static class ParcelaContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Parcela_unarioContext v1;
-		public Parcela_nao_unarioContext v2;
+		public Parcela_unarioContext parcUnario;
+		public Parcela_nao_unarioContext parcNUnario;
 		public Op_unarioContext op_unario() {
 			return getRuleContext(Op_unarioContext.class,0);
 		}
@@ -3486,9 +3538,9 @@ public class LAParser extends Parser {
 	public final ParcelaContext parcela() throws RecognitionException {
 		ParcelaContext _localctx = new ParcelaContext(_ctx, getState());
 		enterRule(_localctx, 90, RULE_parcela);
-		((ParcelaContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((ParcelaContext)_localctx).txt = "";
+		((ParcelaContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((ParcelaContext)_localctx).txt = "";
 		try {
-			setState(484);
+			setState(483);
 			switch (_input.LA(1)) {
 			case EXPOENTE:
 			case ABRE_PARENTESIS:
@@ -3498,13 +3550,13 @@ public class LAParser extends Parser {
 			case N_REAL:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(477);
+				setState(476);
 				op_unario();
-				setState(478);
-				((ParcelaContext)_localctx).v1 = parcela_unario();
+				setState(477);
+				((ParcelaContext)_localctx).parcUnario = parcela_unario();
 
-				        ((ParcelaContext)_localctx).tipoSimbolo = ((ParcelaContext)_localctx).v1.tipoSimbolo; 
-				        ((ParcelaContext)_localctx).txt = ((ParcelaContext)_localctx).v1.txt;
+				        ((ParcelaContext)_localctx).tipoSimbolo = ((ParcelaContext)_localctx).parcUnario.tipoSimbolo; 
+				        ((ParcelaContext)_localctx).txt = ((ParcelaContext)_localctx).parcUnario.txt;
 				    
 				}
 				break;
@@ -3512,11 +3564,11 @@ public class LAParser extends Parser {
 			case CADEIA:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(481);
-				((ParcelaContext)_localctx).v2 = parcela_nao_unario();
+				setState(480);
+				((ParcelaContext)_localctx).parcNUnario = parcela_nao_unario();
 
-				        ((ParcelaContext)_localctx).tipoSimbolo = ((ParcelaContext)_localctx).v2.tipoSimbolo; 
-				        ((ParcelaContext)_localctx).txt = ((ParcelaContext)_localctx).v2.txt;
+				        ((ParcelaContext)_localctx).tipoSimbolo = ((ParcelaContext)_localctx).parcNUnario.tipoSimbolo; 
+				        ((ParcelaContext)_localctx).txt = ((ParcelaContext)_localctx).parcNUnario.txt;
 				    
 				}
 				break;
@@ -3539,10 +3591,10 @@ public class LAParser extends Parser {
 		public String txt;
 		public int linha;
 		public String tipoSimbolo;
-		public Token v1;
-		public Outros_identContext v2;
-		public Token v3;
-		public Chamada_partesContext v4;
+		public Token id;
+		public Outros_identContext outrosID;
+		public Token idCh;
+		public Chamada_partesContext chP;
 		public Token N_INTEIRO;
 		public Token N_REAL;
 		public ExpressaoContext v7;
@@ -3586,52 +3638,55 @@ public class LAParser extends Parser {
 	public final Parcela_unarioContext parcela_unario() throws RecognitionException {
 		Parcela_unarioContext _localctx = new Parcela_unarioContext(_ctx, getState());
 		enterRule(_localctx, 92, RULE_parcela_unario);
-		((Parcela_unarioContext)_localctx).txt = ""; ((Parcela_unarioContext)_localctx).linha = -1; ((Parcela_unarioContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Parcela_unarioContext)_localctx).txt = ""; ((Parcela_unarioContext)_localctx).linha = -1; ((Parcela_unarioContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
-			setState(505);
+			setState(504);
 			switch (_input.LA(1)) {
 			case EXPOENTE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(486);
+				setState(485);
 				match(EXPOENTE);
+				setState(486);
+				((Parcela_unarioContext)_localctx).id = match(IDENT);
 				setState(487);
-				((Parcela_unarioContext)_localctx).v1 = match(IDENT);
+				((Parcela_unarioContext)_localctx).outrosID = outros_ident();
 				setState(488);
-				((Parcela_unarioContext)_localctx).v2 = outros_ident();
-				setState(489);
 				dimensao();
 				 
-				        _localctx.txt+=((Parcela_unarioContext)_localctx).v1.getText()+((Parcela_unarioContext)_localctx).v2.txt;
-				        ((Parcela_unarioContext)_localctx).linha =  ((Parcela_unarioContext)_localctx).v1.getLine();
-				       
-				        if(!pilhaDeTabelas.existeSimbolo(((Parcela_unarioContext)_localctx).v1.getText()+((Parcela_unarioContext)_localctx).v2.txt))
-				            msg_error+="Linha " + ((Parcela_unarioContext)_localctx).v1.getLine() + ": identificador " + ((Parcela_unarioContext)_localctx).v1.getText()+((Parcela_unarioContext)_localctx).v2.txt + " nao declarado\n";
-				        if(((Parcela_unarioContext)_localctx).v2.txt.equals("")) 
-				            ((Parcela_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().GetTipoSimbolo(_localctx.txt);
+				        _localctx.txt+=((Parcela_unarioContext)_localctx).id.getText()+((Parcela_unarioContext)_localctx).outrosID.txt;
+				        ((Parcela_unarioContext)_localctx).linha =  ((Parcela_unarioContext)_localctx).id.getLine();
+				       /*Verificamos se os identificadores usados já foram declarados*/
+				        if(!pilhaDeTabelas.existeSimbolo(((Parcela_unarioContext)_localctx).id.getText()+((Parcela_unarioContext)_localctx).outrosID.txt)){
+				        /*Se não foi emite um erro*/
+				            msg_error+="Linha " + ((Parcela_unarioContext)_localctx).id.getLine() + ": identificador " + ((Parcela_unarioContext)_localctx).id.getText()+((Parcela_unarioContext)_localctx).outrosID.txt + " nao declarado\n";
+				        }
+				        if(((Parcela_unarioContext)_localctx).outrosID.txt.equals("")) 
+				            ((Parcela_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().getTipoSimbolo(_localctx.txt);
 				        else
-				            ((Parcela_unarioContext)_localctx).tipoSimbolo =  tabelaRegistros.getTipoDoSimbolo(((Parcela_unarioContext)_localctx).v2.txt.substring(1));
+				            ((Parcela_unarioContext)_localctx).tipoSimbolo =  tabelaRegistros.getTipoDoSimbolo(((Parcela_unarioContext)_localctx).outrosID.txt.substring(1));
 				    
 				}
 				break;
 			case IDENT:
 				enterOuterAlt(_localctx, 2);
 				{
+				setState(491);
+				((Parcela_unarioContext)_localctx).idCh = match(IDENT);
 				setState(492);
-				((Parcela_unarioContext)_localctx).v3 = match(IDENT);
-				setState(493);
-				((Parcela_unarioContext)_localctx).v4 = chamada_partes(((Parcela_unarioContext)_localctx).v3.getText());
+				((Parcela_unarioContext)_localctx).chP = chamada_partes(((Parcela_unarioContext)_localctx).idCh.getText());
 
-				        _localctx.txt+=((Parcela_unarioContext)_localctx).v3.getText()+((Parcela_unarioContext)_localctx).v4.outrosIdent;
-				        ((Parcela_unarioContext)_localctx).linha =  ((Parcela_unarioContext)_localctx).v3.getLine();
+				        _localctx.txt+=((Parcela_unarioContext)_localctx).idCh.getText()+((Parcela_unarioContext)_localctx).chP.outrosIdent;
+				        ((Parcela_unarioContext)_localctx).linha =  ((Parcela_unarioContext)_localctx).idCh.getLine();
+				        /*Verifica-se se o simbolo foi declarado*/
 				        if(!pilhaDeTabelas.existeSimbolo(_localctx.txt))
-				            msg_error+="Linha " + ((Parcela_unarioContext)_localctx).v3.getLine() + ": identificador " + _localctx.txt + " nao declarado\n";
+				            msg_error+="Linha " + ((Parcela_unarioContext)_localctx).idCh.getLine() + ": identificador " + _localctx.txt + " nao declarado\n";
 				        else
 				        {
-				            if(((Parcela_unarioContext)_localctx).v4.tipoSimbolo.equals("SEM_TIPO"))
-				                ((Parcela_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().GetTipoSimbolo(_localctx.txt);
+				            if(((Parcela_unarioContext)_localctx).chP.tipoSimbolo.equals("TIPO_NAO_DECLARADO"))
+				                ((Parcela_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().getTipoSimbolo(_localctx.txt);
 				            else
-				                ((Parcela_unarioContext)_localctx).tipoSimbolo =  ((Parcela_unarioContext)_localctx).v4.tipoSimbolo;
+				                ((Parcela_unarioContext)_localctx).tipoSimbolo =  ((Parcela_unarioContext)_localctx).chP.tipoSimbolo;
 				        }
 				    
 				}
@@ -3639,7 +3694,7 @@ public class LAParser extends Parser {
 			case N_INTEIRO:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(496);
+				setState(495);
 				((Parcela_unarioContext)_localctx).N_INTEIRO = match(N_INTEIRO);
 
 				        ((Parcela_unarioContext)_localctx).tipoSimbolo =  "inteiro"; 
@@ -3650,7 +3705,7 @@ public class LAParser extends Parser {
 			case N_REAL:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(498);
+				setState(497);
 				((Parcela_unarioContext)_localctx).N_REAL = match(N_REAL);
 				  
 				        ((Parcela_unarioContext)_localctx).tipoSimbolo =  "real"; 
@@ -3661,11 +3716,11 @@ public class LAParser extends Parser {
 			case ABRE_PARENTESIS:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(500);
+				setState(499);
 				match(ABRE_PARENTESIS);
-				setState(501);
+				setState(500);
 				((Parcela_unarioContext)_localctx).v7 = expressao();
-				setState(502);
+				setState(501);
 				match(FECHA_PARENTESIS);
 
 				        ((Parcela_unarioContext)_localctx).tipoSimbolo = ((Parcela_unarioContext)_localctx).v7.tipoSimbolo;
@@ -3691,8 +3746,8 @@ public class LAParser extends Parser {
 		public String txt;
 		public int linha;
 		public String tipoSimbolo;
-		public Token v1;
-		public Outros_identContext v2;
+		public Token id;
+		public Outros_identContext outrosID;
 		public Token CADEIA;
 		public TerminalNode OP_AND() { return getToken(LAParser.OP_AND, 0); }
 		public DimensaoContext dimensao() {
@@ -3725,32 +3780,32 @@ public class LAParser extends Parser {
 	public final Parcela_nao_unarioContext parcela_nao_unario() throws RecognitionException {
 		Parcela_nao_unarioContext _localctx = new Parcela_nao_unarioContext(_ctx, getState());
 		enterRule(_localctx, 94, RULE_parcela_nao_unario);
-		((Parcela_nao_unarioContext)_localctx).txt = ""; ((Parcela_nao_unarioContext)_localctx).linha = -1; ((Parcela_nao_unarioContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Parcela_nao_unarioContext)_localctx).txt = ""; ((Parcela_nao_unarioContext)_localctx).linha = -1; ((Parcela_nao_unarioContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
-			setState(515);
+			setState(514);
 			switch (_input.LA(1)) {
 			case OP_AND:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(507);
+				setState(506);
 				match(OP_AND);
+				setState(507);
+				((Parcela_nao_unarioContext)_localctx).id = match(IDENT);
 				setState(508);
-				((Parcela_nao_unarioContext)_localctx).v1 = match(IDENT);
-				setState(509);
-				((Parcela_nao_unarioContext)_localctx).v2 = outros_ident();
+				((Parcela_nao_unarioContext)_localctx).outrosID = outros_ident();
 
-				        _localctx.txt+=((Parcela_nao_unarioContext)_localctx).v1.getText(); 
-				        ((Parcela_nao_unarioContext)_localctx).linha =  ((Parcela_nao_unarioContext)_localctx).v1.getLine();
-				        _localctx.txt+= ((Parcela_nao_unarioContext)_localctx).v2.txt; ((Parcela_nao_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.getTipoDoSimbolo(_localctx.txt);
+				        _localctx.txt+=((Parcela_nao_unarioContext)_localctx).id.getText(); 
+				        ((Parcela_nao_unarioContext)_localctx).linha =  ((Parcela_nao_unarioContext)_localctx).id.getLine();
+				        _localctx.txt+= ((Parcela_nao_unarioContext)_localctx).outrosID.txt; ((Parcela_nao_unarioContext)_localctx).tipoSimbolo =  pilhaDeTabelas.getTipoDoSimbolo(_localctx.txt);
 				    
-				setState(511);
+				setState(510);
 				dimensao();
 				}
 				break;
 			case CADEIA:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(513);
+				setState(512);
 				((Parcela_nao_unarioContext)_localctx).CADEIA = match(CADEIA);
 
 				        ((Parcela_nao_unarioContext)_localctx).tipoSimbolo =  "literal"; 
@@ -3810,19 +3865,19 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(521);
+			setState(520);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==PORCENTAGEM) {
 				{
 				{
-				setState(517);
+				setState(516);
 				match(PORCENTAGEM);
-				setState(518);
+				setState(517);
 				parcela();
 				}
 				}
-				setState(523);
+				setState(522);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3843,17 +3898,15 @@ public class LAParser extends Parser {
 		public String primeiroIdent;
 		public String tipoSimbolo;
 		public String outrosIdent;
-		public ExpressaoContext v1;
-		public Mais_expressaoContext v2;
-		public Outros_identContext v3;
+		public Outros_identContext outrosID;
 		public TerminalNode ABRE_PARENTESIS() { return getToken(LAParser.ABRE_PARENTESIS, 0); }
-		public TerminalNode FECHA_PARENTESIS() { return getToken(LAParser.FECHA_PARENTESIS, 0); }
 		public ExpressaoContext expressao() {
 			return getRuleContext(ExpressaoContext.class,0);
 		}
 		public Mais_expressaoContext mais_expressao() {
 			return getRuleContext(Mais_expressaoContext.class,0);
 		}
+		public TerminalNode FECHA_PARENTESIS() { return getToken(LAParser.FECHA_PARENTESIS, 0); }
 		public DimensaoContext dimensao() {
 			return getRuleContext(DimensaoContext.class,0);
 		}
@@ -3884,34 +3937,34 @@ public class LAParser extends Parser {
 	public final Chamada_partesContext chamada_partes(String primeiroIdent) throws RecognitionException {
 		Chamada_partesContext _localctx = new Chamada_partesContext(_ctx, getState(), primeiroIdent);
 		enterRule(_localctx, 98, RULE_chamada_partes);
-		((Chamada_partesContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Chamada_partesContext)_localctx).outrosIdent = "";
+		((Chamada_partesContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Chamada_partesContext)_localctx).outrosIdent = "";
 		try {
-			setState(534);
+			setState(533);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,33,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(524);
+				setState(523);
 				match(ABRE_PARENTESIS);
+				setState(524);
+				expressao();
 				setState(525);
-				((Chamada_partesContext)_localctx).v1 = expressao();
+				mais_expressao();
 				setState(526);
-				((Chamada_partesContext)_localctx).v2 = mais_expressao();
-				setState(527);
 				match(FECHA_PARENTESIS);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
+				setState(528);
+				((Chamada_partesContext)_localctx).outrosID = outros_ident();
 				setState(529);
-				((Chamada_partesContext)_localctx).v3 = outros_ident();
-				setState(530);
 				dimensao();
 
-				        ((Chamada_partesContext)_localctx).outrosIdent =  ((Chamada_partesContext)_localctx).v3.txt;
-				        ((Chamada_partesContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().GetTipoSimbolo(_localctx.primeiroIdent+((Chamada_partesContext)_localctx).v3.txt);
+				        ((Chamada_partesContext)_localctx).outrosIdent =  ((Chamada_partesContext)_localctx).outrosID.txt;
+				        ((Chamada_partesContext)_localctx).tipoSimbolo =  pilhaDeTabelas.topo().getTipoSimbolo(_localctx.primeiroIdent+((Chamada_partesContext)_localctx).outrosID.txt);
 				    
 				}
 				break;
@@ -3936,8 +3989,8 @@ public class LAParser extends Parser {
 	public static class Exp_relacionalContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Exp_aritmeticaContext v1;
-		public Op_opcionalContext v2;
+		public Exp_aritmeticaContext exp;
+		public Op_opcionalContext opOp;
 		public Exp_aritmeticaContext exp_aritmetica() {
 			return getRuleContext(Exp_aritmeticaContext.class,0);
 		}
@@ -3966,20 +4019,20 @@ public class LAParser extends Parser {
 	public final Exp_relacionalContext exp_relacional() throws RecognitionException {
 		Exp_relacionalContext _localctx = new Exp_relacionalContext(_ctx, getState());
 		enterRule(_localctx, 100, RULE_exp_relacional);
-		((Exp_relacionalContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Exp_relacionalContext)_localctx).txt = "";
+		((Exp_relacionalContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Exp_relacionalContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(535);
+			((Exp_relacionalContext)_localctx).exp = exp_aritmetica();
 			setState(536);
-			((Exp_relacionalContext)_localctx).v1 = exp_aritmetica();
-			setState(537);
-			((Exp_relacionalContext)_localctx).v2 = op_opcional();
+			((Exp_relacionalContext)_localctx).opOp = op_opcional();
 
-			        if(((Exp_relacionalContext)_localctx).v2.tipoSimbolo.equals("SEM_TIPO"))
-			            ((Exp_relacionalContext)_localctx).tipoSimbolo = ((Exp_relacionalContext)_localctx).v1.tipoSimbolo;
+			        if(((Exp_relacionalContext)_localctx).opOp.tipoSimbolo.equals("TIPO_NAO_DECLARADO"))
+			            ((Exp_relacionalContext)_localctx).tipoSimbolo = ((Exp_relacionalContext)_localctx).exp.tipoSimbolo;
 			        else
-			            ((Exp_relacionalContext)_localctx).tipoSimbolo = ((Exp_relacionalContext)_localctx).v2.tipoSimbolo;
-			        ((Exp_relacionalContext)_localctx).txt = ((Exp_relacionalContext)_localctx).v1.txt;
+			            ((Exp_relacionalContext)_localctx).tipoSimbolo = ((Exp_relacionalContext)_localctx).opOp.tipoSimbolo;
+			        ((Exp_relacionalContext)_localctx).txt = ((Exp_relacionalContext)_localctx).exp.txt;
 			    
 			}
 		}
@@ -3996,7 +4049,7 @@ public class LAParser extends Parser {
 
 	public static class Op_opcionalContext extends ParserRuleContext {
 		public String tipoSimbolo;
-		public Op_relacionalContext v1;
+		public Op_relacionalContext opRel;
 		public Exp_aritmeticaContext exp_aritmetica() {
 			return getRuleContext(Exp_aritmeticaContext.class,0);
 		}
@@ -4025,21 +4078,21 @@ public class LAParser extends Parser {
 	public final Op_opcionalContext op_opcional() throws RecognitionException {
 		Op_opcionalContext _localctx = new Op_opcionalContext(_ctx, getState());
 		enterRule(_localctx, 102, RULE_op_opcional);
-		((Op_opcionalContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Op_opcionalContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(544);
+			setState(543);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MENOR_IGUAL) | (1L << MAIOR_IGUAL) | (1L << MENOR) | (1L << MAIOR) | (1L << IGUAL) | (1L << DIFERENTE))) != 0)) {
 				{
+				setState(539);
+				((Op_opcionalContext)_localctx).opRel = op_relacional();
 				setState(540);
-				((Op_opcionalContext)_localctx).v1 = op_relacional();
-				setState(541);
 				exp_aritmetica();
 
-				        ((Op_opcionalContext)_localctx).tipoSimbolo = ((Op_opcionalContext)_localctx).v1.tipoSimbolo;
+				        ((Op_opcionalContext)_localctx).tipoSimbolo = ((Op_opcionalContext)_localctx).opRel.tipoSimbolo;
 				    
 				}
 			}
@@ -4087,56 +4140,68 @@ public class LAParser extends Parser {
 	public final Op_relacionalContext op_relacional() throws RecognitionException {
 		Op_relacionalContext _localctx = new Op_relacionalContext(_ctx, getState());
 		enterRule(_localctx, 104, RULE_op_relacional);
-		((Op_relacionalContext)_localctx).tipoSimbolo = "SEM_TIPO";
+		((Op_relacionalContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO";
 		try {
-			setState(558);
+			setState(557);
 			switch (_input.LA(1)) {
 			case IGUAL:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(546);
+				setState(545);
 				match(IGUAL);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			case DIFERENTE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(548);
+				setState(547);
 				match(DIFERENTE);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			case MAIOR_IGUAL:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(550);
+				setState(549);
 				match(MAIOR_IGUAL);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			case MENOR_IGUAL:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(552);
+				setState(551);
 				match(MENOR_IGUAL);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			case MAIOR:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(554);
+				setState(553);
 				match(MAIOR);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			case MENOR:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(556);
+				setState(555);
 				match(MENOR);
-				((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+
+				        ((Op_relacionalContext)_localctx).tipoSimbolo = "logico";
+				    
 				}
 				break;
 			default:
@@ -4157,7 +4222,7 @@ public class LAParser extends Parser {
 	public static class ExpressaoContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Termo_logicoContext v1;
+		public Termo_logicoContext termoLog;
 		public Outros_termos_logicosContext outros_termos_logicos() {
 			return getRuleContext(Outros_termos_logicosContext.class,0);
 		}
@@ -4186,15 +4251,17 @@ public class LAParser extends Parser {
 	public final ExpressaoContext expressao() throws RecognitionException {
 		ExpressaoContext _localctx = new ExpressaoContext(_ctx, getState());
 		enterRule(_localctx, 106, RULE_expressao);
-		((ExpressaoContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((ExpressaoContext)_localctx).txt = "";
+		((ExpressaoContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((ExpressaoContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(559);
+			((ExpressaoContext)_localctx).termoLog = termo_logico();
 			setState(560);
-			((ExpressaoContext)_localctx).v1 = termo_logico();
-			setState(561);
 			outros_termos_logicos();
-			((ExpressaoContext)_localctx).tipoSimbolo = ((ExpressaoContext)_localctx).v1.tipoSimbolo; ((ExpressaoContext)_localctx).txt = ((ExpressaoContext)_localctx).v1.txt;
+
+			        ((ExpressaoContext)_localctx).tipoSimbolo = ((ExpressaoContext)_localctx).termoLog.tipoSimbolo; ((ExpressaoContext)_localctx).txt = ((ExpressaoContext)_localctx).termoLog.txt;
+			    
 			}
 		}
 		catch (RecognitionException re) {
@@ -4236,11 +4303,11 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(565);
+			setState(564);
 			_la = _input.LA(1);
 			if (_la==NAO) {
 				{
-				setState(564);
+				setState(563);
 				match(NAO);
 				}
 			}
@@ -4261,7 +4328,7 @@ public class LAParser extends Parser {
 	public static class Termo_logicoContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Fator_logicoContext v1;
+		public Fator_logicoContext fatLog;
 		public Outros_fatores_logicosContext outros_fatores_logicos() {
 			return getRuleContext(Outros_fatores_logicosContext.class,0);
 		}
@@ -4290,15 +4357,17 @@ public class LAParser extends Parser {
 	public final Termo_logicoContext termo_logico() throws RecognitionException {
 		Termo_logicoContext _localctx = new Termo_logicoContext(_ctx, getState());
 		enterRule(_localctx, 110, RULE_termo_logico);
-		((Termo_logicoContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Termo_logicoContext)_localctx).txt = "";
+		((Termo_logicoContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Termo_logicoContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(566);
+			((Termo_logicoContext)_localctx).fatLog = fator_logico();
 			setState(567);
-			((Termo_logicoContext)_localctx).v1 = fator_logico();
-			setState(568);
 			outros_fatores_logicos();
-			((Termo_logicoContext)_localctx).tipoSimbolo = ((Termo_logicoContext)_localctx).v1.tipoSimbolo; ((Termo_logicoContext)_localctx).txt = ((Termo_logicoContext)_localctx).v1.txt;
+
+			    ((Termo_logicoContext)_localctx).tipoSimbolo = ((Termo_logicoContext)_localctx).fatLog.tipoSimbolo; ((Termo_logicoContext)_localctx).txt = ((Termo_logicoContext)_localctx).fatLog.txt;
+			   
 			}
 		}
 		catch (RecognitionException re) {
@@ -4349,19 +4418,19 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(575);
+			setState(574);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==OU) {
 				{
 				{
-				setState(571);
+				setState(570);
 				match(OU);
-				setState(572);
+				setState(571);
 				termo_logico();
 				}
 				}
-				setState(577);
+				setState(576);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -4415,19 +4484,19 @@ public class LAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(582);
+			setState(581);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==E) {
 				{
 				{
-				setState(578);
+				setState(577);
 				match(E);
-				setState(579);
+				setState(578);
 				fator_logico();
 				}
 				}
-				setState(584);
+				setState(583);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -4447,7 +4516,7 @@ public class LAParser extends Parser {
 	public static class Fator_logicoContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Parcela_logicaContext v1;
+		public Parcela_logicaContext parcLog;
 		public Op_naoContext op_nao() {
 			return getRuleContext(Op_naoContext.class,0);
 		}
@@ -4476,15 +4545,17 @@ public class LAParser extends Parser {
 	public final Fator_logicoContext fator_logico() throws RecognitionException {
 		Fator_logicoContext _localctx = new Fator_logicoContext(_ctx, getState());
 		enterRule(_localctx, 116, RULE_fator_logico);
-		((Fator_logicoContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Fator_logicoContext)_localctx).txt = "";
+		((Fator_logicoContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Fator_logicoContext)_localctx).txt = "";
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(585);
+			setState(584);
 			op_nao();
-			setState(586);
-			((Fator_logicoContext)_localctx).v1 = parcela_logica();
-			((Fator_logicoContext)_localctx).tipoSimbolo = ((Fator_logicoContext)_localctx).v1.tipoSimbolo; ((Fator_logicoContext)_localctx).txt = ((Fator_logicoContext)_localctx).v1.txt;
+			setState(585);
+			((Fator_logicoContext)_localctx).parcLog = parcela_logica();
+
+			        ((Fator_logicoContext)_localctx).tipoSimbolo = ((Fator_logicoContext)_localctx).parcLog.tipoSimbolo; ((Fator_logicoContext)_localctx).txt = ((Fator_logicoContext)_localctx).parcLog.txt;
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -4501,7 +4572,7 @@ public class LAParser extends Parser {
 	public static class Parcela_logicaContext extends ParserRuleContext {
 		public String tipoSimbolo;
 		public String txt;
-		public Exp_relacionalContext v1;
+		public Exp_relacionalContext exp;
 		public TerminalNode VERDADEIRO() { return getToken(LAParser.VERDADEIRO, 0); }
 		public TerminalNode FALSO() { return getToken(LAParser.FALSO, 0); }
 		public Exp_relacionalContext exp_relacional() {
@@ -4529,24 +4600,28 @@ public class LAParser extends Parser {
 	public final Parcela_logicaContext parcela_logica() throws RecognitionException {
 		Parcela_logicaContext _localctx = new Parcela_logicaContext(_ctx, getState());
 		enterRule(_localctx, 118, RULE_parcela_logica);
-		((Parcela_logicaContext)_localctx).tipoSimbolo = "SEM_TIPO"; ((Parcela_logicaContext)_localctx).txt = "";
+		((Parcela_logicaContext)_localctx).tipoSimbolo = "TIPO_NAO_DECLARADO"; ((Parcela_logicaContext)_localctx).txt = "";
 		try {
-			setState(596);
+			setState(595);
 			switch (_input.LA(1)) {
 			case VERDADEIRO:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(589);
+				setState(588);
 				match(VERDADEIRO);
-				((Parcela_logicaContext)_localctx).tipoSimbolo =  "logico";
+
+				        ((Parcela_logicaContext)_localctx).tipoSimbolo =  "logico";
+				    
 				}
 				break;
 			case FALSO:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(591);
+				setState(590);
 				match(FALSO);
-				((Parcela_logicaContext)_localctx).tipoSimbolo =  "logico";
+
+				        ((Parcela_logicaContext)_localctx).tipoSimbolo =  "logico";
+				    
 				}
 				break;
 			case EXPOENTE:
@@ -4559,9 +4634,11 @@ public class LAParser extends Parser {
 			case N_REAL:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(593);
-				((Parcela_logicaContext)_localctx).v1 = exp_relacional();
-				((Parcela_logicaContext)_localctx).tipoSimbolo = ((Parcela_logicaContext)_localctx).v1.tipoSimbolo; ((Parcela_logicaContext)_localctx).txt = ((Parcela_logicaContext)_localctx).v1.txt;
+				setState(592);
+				((Parcela_logicaContext)_localctx).exp = exp_relacional();
+
+				        ((Parcela_logicaContext)_localctx).tipoSimbolo = ((Parcela_logicaContext)_localctx).exp.tipoSimbolo; ((Parcela_logicaContext)_localctx).txt = ((Parcela_logicaContext)_localctx).exp.txt;
+
 				}
 				break;
 			default:
@@ -4580,7 +4657,7 @@ public class LAParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3C\u0259\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3C\u0258\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -4607,37 +4684,37 @@ public class LAParser extends Parser {
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
-		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
-		"\34\5\34\u0185\n\34\3\35\3\35\3\35\3\35\3\35\3\35\5\35\u018d\n\35\3\36"+
-		"\3\36\5\36\u0191\n\36\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37"+
-		"\5\37\u019d\n\37\3 \3 \3 \5 \u01a2\n \3!\3!\3!\3!\3!\3\"\5\"\u01aa\n\""+
-		"\3#\3#\3#\3$\3$\5$\u01b1\n$\3%\3%\3%\3%\3&\3&\3&\3&\5&\u01bb\n&\3\'\5"+
-		"\'\u01be\n\'\3(\3(\3(\3(\3)\3)\3*\3*\3+\3+\3+\3+\3,\3,\3,\3,\3,\3,\5,"+
-		"\u01d2\n,\3-\3-\3-\3-\3.\3.\3.\7.\u01db\n.\f.\16.\u01de\13.\3/\3/\3/\3"+
-		"/\3/\3/\3/\5/\u01e7\n/\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3"+
-		"\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\5\60\u01fc\n\60\3\61"+
-		"\3\61\3\61\3\61\3\61\3\61\3\61\3\61\5\61\u0206\n\61\3\62\3\62\7\62\u020a"+
-		"\n\62\f\62\16\62\u020d\13\62\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3"+
-		"\63\3\63\5\63\u0219\n\63\3\64\3\64\3\64\3\64\3\65\3\65\3\65\3\65\5\65"+
-		"\u0223\n\65\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66"+
-		"\5\66\u0231\n\66\3\67\3\67\3\67\3\67\38\58\u0238\n8\39\39\39\39\3:\3:"+
-		"\7:\u0240\n:\f:\16:\u0243\13:\3;\3;\7;\u0247\n;\f;\16;\u024a\13;\3<\3"+
-		"<\3<\3<\3=\3=\3=\3=\3=\3=\3=\5=\u0257\n=\3=\2\2>\2\4\6\b\n\f\16\20\22"+
-		"\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnp"+
-		"rtvx\2\5\5\2\22\23>>@A\4\2//\61\61\3\2;<\u0258\2z\3\2\2\2\4\u0084\3\2"+
-		"\2\2\6\u0089\3\2\2\2\b\u009d\3\2\2\2\n\u009f\3\2\2\2\f\u00ac\3\2\2\2\16"+
-		"\u00af\3\2\2\2\20\u00b8\3\2\2\2\22\u00bf\3\2\2\2\24\u00c8\3\2\2\2\26\u00d1"+
-		"\3\2\2\2\30\u00d9\3\2\2\2\32\u00e0\3\2\2\2\34\u00ea\3\2\2\2\36\u00f1\3"+
-		"\2\2\2 \u00f3\3\2\2\2\"\u00f7\3\2\2\2$\u00f9\3\2\2\2&\u0119\3\2\2\2(\u011c"+
-		"\3\2\2\2*\u011e\3\2\2\2,\u0127\3\2\2\2.\u012b\3\2\2\2\60\u0130\3\2\2\2"+
-		"\62\u0133\3\2\2\2\64\u0139\3\2\2\2\66\u0184\3\2\2\28\u018c\3\2\2\2:\u0190"+
-		"\3\2\2\2<\u019c\3\2\2\2>\u01a1\3\2\2\2@\u01a3\3\2\2\2B\u01a9\3\2\2\2D"+
-		"\u01ab\3\2\2\2F\u01b0\3\2\2\2H\u01b2\3\2\2\2J\u01ba\3\2\2\2L\u01bd\3\2"+
-		"\2\2N\u01bf\3\2\2\2P\u01c3\3\2\2\2R\u01c5\3\2\2\2T\u01c7\3\2\2\2V\u01d1"+
-		"\3\2\2\2X\u01d3\3\2\2\2Z\u01dc\3\2\2\2\\\u01e6\3\2\2\2^\u01fb\3\2\2\2"+
-		"`\u0205\3\2\2\2b\u020b\3\2\2\2d\u0218\3\2\2\2f\u021a\3\2\2\2h\u0222\3"+
-		"\2\2\2j\u0230\3\2\2\2l\u0232\3\2\2\2n\u0237\3\2\2\2p\u0239\3\2\2\2r\u0241"+
-		"\3\2\2\2t\u0248\3\2\2\2v\u024b\3\2\2\2x\u0256\3\2\2\2z{\b\2\1\2{|\5\4"+
+		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\5"+
+		"\34\u0184\n\34\3\35\3\35\3\35\3\35\3\35\3\35\5\35\u018c\n\35\3\36\3\36"+
+		"\5\36\u0190\n\36\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\5\37"+
+		"\u019c\n\37\3 \3 \3 \5 \u01a1\n \3!\3!\3!\3!\3!\3\"\5\"\u01a9\n\"\3#\3"+
+		"#\3#\3$\3$\5$\u01b0\n$\3%\3%\3%\3%\3&\3&\3&\3&\5&\u01ba\n&\3\'\5\'\u01bd"+
+		"\n\'\3(\3(\3(\3(\3)\3)\3*\3*\3+\3+\3+\3+\3,\3,\3,\3,\3,\3,\5,\u01d1\n"+
+		",\3-\3-\3-\3-\3.\3.\3.\7.\u01da\n.\f.\16.\u01dd\13.\3/\3/\3/\3/\3/\3/"+
+		"\3/\5/\u01e6\n/\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60"+
+		"\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\5\60\u01fb\n\60\3\61\3\61\3\61"+
+		"\3\61\3\61\3\61\3\61\3\61\5\61\u0205\n\61\3\62\3\62\7\62\u0209\n\62\f"+
+		"\62\16\62\u020c\13\62\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63"+
+		"\5\63\u0218\n\63\3\64\3\64\3\64\3\64\3\65\3\65\3\65\3\65\5\65\u0222\n"+
+		"\65\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\3\66\5\66\u0230"+
+		"\n\66\3\67\3\67\3\67\3\67\38\58\u0237\n8\39\39\39\39\3:\3:\7:\u023f\n"+
+		":\f:\16:\u0242\13:\3;\3;\7;\u0246\n;\f;\16;\u0249\13;\3<\3<\3<\3<\3=\3"+
+		"=\3=\3=\3=\3=\3=\5=\u0256\n=\3=\2\2>\2\4\6\b\n\f\16\20\22\24\26\30\32"+
+		"\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvx\2\5\5\2"+
+		"\22\23>>@A\4\2//\61\61\3\2;<\u0257\2z\3\2\2\2\4\u0084\3\2\2\2\6\u0089"+
+		"\3\2\2\2\b\u009d\3\2\2\2\n\u009f\3\2\2\2\f\u00ac\3\2\2\2\16\u00af\3\2"+
+		"\2\2\20\u00b8\3\2\2\2\22\u00bf\3\2\2\2\24\u00c8\3\2\2\2\26\u00d1\3\2\2"+
+		"\2\30\u00d9\3\2\2\2\32\u00e0\3\2\2\2\34\u00ea\3\2\2\2\36\u00f1\3\2\2\2"+
+		" \u00f3\3\2\2\2\"\u00f7\3\2\2\2$\u00f9\3\2\2\2&\u0119\3\2\2\2(\u011c\3"+
+		"\2\2\2*\u011e\3\2\2\2,\u0127\3\2\2\2.\u012b\3\2\2\2\60\u0130\3\2\2\2\62"+
+		"\u0133\3\2\2\2\64\u0139\3\2\2\2\66\u0183\3\2\2\28\u018b\3\2\2\2:\u018f"+
+		"\3\2\2\2<\u019b\3\2\2\2>\u01a0\3\2\2\2@\u01a2\3\2\2\2B\u01a8\3\2\2\2D"+
+		"\u01aa\3\2\2\2F\u01af\3\2\2\2H\u01b1\3\2\2\2J\u01b9\3\2\2\2L\u01bc\3\2"+
+		"\2\2N\u01be\3\2\2\2P\u01c2\3\2\2\2R\u01c4\3\2\2\2T\u01c6\3\2\2\2V\u01d0"+
+		"\3\2\2\2X\u01d2\3\2\2\2Z\u01db\3\2\2\2\\\u01e5\3\2\2\2^\u01fa\3\2\2\2"+
+		"`\u0204\3\2\2\2b\u020a\3\2\2\2d\u0217\3\2\2\2f\u0219\3\2\2\2h\u0221\3"+
+		"\2\2\2j\u022f\3\2\2\2l\u0231\3\2\2\2n\u0236\3\2\2\2p\u0238\3\2\2\2r\u0240"+
+		"\3\2\2\2t\u0247\3\2\2\2v\u024a\3\2\2\2x\u0255\3\2\2\2z{\b\2\1\2{|\5\4"+
 		"\3\2|}\7\3\2\2}~\5\62\32\2~\177\7\4\2\2\177\u0080\b\2\1\2\u0080\3\3\2"+
 		"\2\2\u0081\u0083\5\6\4\2\u0082\u0081\3\2\2\2\u0083\u0086\3\2\2\2\u0084"+
 		"\u0082\3\2\2\2\u0084\u0085\3\2\2\2\u0085\5\3\2\2\2\u0086\u0084\3\2\2\2"+
@@ -4699,97 +4776,97 @@ public class LAParser extends Parser {
 		"\u0136\3\2\2\2\u0138\u013b\3\2\2\2\u0139\u0137\3\2\2\2\u0139\u013a\3\2"+
 		"\2\2\u013a\65\3\2\2\2\u013b\u0139\3\2\2\2\u013c\u013d\7\35\2\2\u013d\u013e"+
 		"\7\30\2\2\u013e\u013f\5\16\b\2\u013f\u0140\5\30\r\2\u0140\u0141\b\34\1"+
-		"\2\u0141\u0142\7\31\2\2\u0142\u0143\b\34\1\2\u0143\u0185\3\2\2\2\u0144"+
+		"\2\u0141\u0142\7\31\2\2\u0142\u0143\b\34\1\2\u0143\u0184\3\2\2\2\u0144"+
 		"\u0145\7\36\2\2\u0145\u0146\7\30\2\2\u0146\u0147\5l\67\2\u0147\u0148\5"+
-		"8\35\2\u0148\u0149\7\31\2\2\u0149\u014a\b\34\1\2\u014a\u0185\3\2\2\2\u014b"+
+		"8\35\2\u0148\u0149\7\31\2\2\u0149\u014a\b\34\1\2\u014a\u0184\3\2\2\2\u014b"+
 		"\u014c\7\37\2\2\u014c\u014d\5l\67\2\u014d\u014e\7 \2\2\u014e\u014f\5\64"+
 		"\33\2\u014f\u0150\5:\36\2\u0150\u0151\7!\2\2\u0151\u0152\b\34\1\2\u0152"+
-		"\u0185\3\2\2\2\u0153\u0154\7#\2\2\u0154\u0155\5N(\2\u0155\u0156\7$\2\2"+
+		"\u0184\3\2\2\2\u0153\u0154\7#\2\2\u0154\u0155\5N(\2\u0155\u0156\7$\2\2"+
 		"\u0156\u0157\5@!\2\u0157\u0158\5:\36\2\u0158\u0159\7%\2\2\u0159\u015a"+
-		"\b\34\1\2\u015a\u0185\3\2\2\2\u015b\u015c\7&\2\2\u015c\u015d\7?\2\2\u015d"+
+		"\b\34\1\2\u015a\u0184\3\2\2\2\u015b\u015c\7&\2\2\u015c\u015d\7?\2\2\u015d"+
 		"\u015e\7\'\2\2\u015e\u015f\5N(\2\u015f\u0160\7(\2\2\u0160\u0161\5N(\2"+
 		"\u0161\u0162\7)\2\2\u0162\u0163\5\64\33\2\u0163\u0164\7*\2\2\u0164\u0165"+
-		"\b\34\1\2\u0165\u0185\3\2\2\2\u0166\u0167\7+\2\2\u0167\u0168\5l\67\2\u0168"+
+		"\b\34\1\2\u0165\u0184\3\2\2\2\u0166\u0167\7+\2\2\u0167\u0168\5l\67\2\u0168"+
 		"\u0169\7)\2\2\u0169\u016a\5\64\33\2\u016a\u016b\7,\2\2\u016b\u016c\b\34"+
-		"\1\2\u016c\u0185\3\2\2\2\u016d\u016e\7)\2\2\u016e\u016f\5\64\33\2\u016f"+
-		"\u0170\7(\2\2\u0170\u0171\5l\67\2\u0171\u0172\b\34\1\2\u0172\u0185\3\2"+
+		"\1\2\u016c\u0184\3\2\2\2\u016d\u016e\7)\2\2\u016e\u016f\5\64\33\2\u016f"+
+		"\u0170\7(\2\2\u0170\u0171\5l\67\2\u0171\u0172\b\34\1\2\u0172\u0184\3\2"+
 		"\2\2\u0173\u0174\7\f\2\2\u0174\u0175\7?\2\2\u0175\u0176\5\22\n\2\u0176"+
 		"\u0177\5\24\13\2\u0177\u0178\7\'\2\2\u0178\u0179\5l\67\2\u0179\u017a\b"+
-		"\34\1\2\u017a\u017b\b\34\1\2\u017b\u0185\3\2\2\2\u017c\u017d\7?\2\2\u017d"+
-		"\u017e\5<\37\2\u017e\u017f\b\34\1\2\u017f\u0185\3\2\2\2\u0180\u0181\7"+
-		"-\2\2\u0181\u0182\5l\67\2\u0182\u0183\b\34\1\2\u0183\u0185\3\2\2\2\u0184"+
-		"\u013c\3\2\2\2\u0184\u0144\3\2\2\2\u0184\u014b\3\2\2\2\u0184\u0153\3\2"+
-		"\2\2\u0184\u015b\3\2\2\2\u0184\u0166\3\2\2\2\u0184\u016d\3\2\2\2\u0184"+
-		"\u0173\3\2\2\2\u0184\u017c\3\2\2\2\u0184\u0180\3\2\2\2\u0185\67\3\2\2"+
-		"\2\u0186\u0187\7\13\2\2\u0187\u0188\5l\67\2\u0188\u0189\58\35\2\u0189"+
-		"\u018a\b\35\1\2\u018a\u018d\3\2\2\2\u018b\u018d\3\2\2\2\u018c\u0186\3"+
-		"\2\2\2\u018c\u018b\3\2\2\2\u018d9\3\2\2\2\u018e\u018f\7\"\2\2\u018f\u0191"+
-		"\5\64\33\2\u0190\u018e\3\2\2\2\u0190\u0191\3\2\2\2\u0191;\3\2\2\2\u0192"+
-		"\u0193\7\30\2\2\u0193\u0194\5> \2\u0194\u0195\7\31\2\2\u0195\u019d\3\2"+
-		"\2\2\u0196\u0197\5\22\n\2\u0197\u0198\5\24\13\2\u0198\u0199\7\'\2\2\u0199"+
-		"\u019a\5l\67\2\u019a\u019b\b\37\1\2\u019b\u019d\3\2\2\2\u019c\u0192\3"+
-		"\2\2\2\u019c\u0196\3\2\2\2\u019d=\3\2\2\2\u019e\u019f\5l\67\2\u019f\u01a0"+
-		"\58\35\2\u01a0\u01a2\3\2\2\2\u01a1\u019e\3\2\2\2\u01a1\u01a2\3\2\2\2\u01a2"+
-		"?\3\2\2\2\u01a3\u01a4\5D#\2\u01a4\u01a5\7\b\2\2\u01a5\u01a6\5\64\33\2"+
-		"\u01a6\u01a7\5B\"\2\u01a7A\3\2\2\2\u01a8\u01aa\5@!\2\u01a9\u01a8\3\2\2"+
-		"\2\u01a9\u01aa\3\2\2\2\u01aaC\3\2\2\2\u01ab\u01ac\5H%\2\u01ac\u01ad\5"+
-		"F$\2\u01adE\3\2\2\2\u01ae\u01af\7\13\2\2\u01af\u01b1\5D#\2\u01b0\u01ae"+
-		"\3\2\2\2\u01b0\u01b1\3\2\2\2\u01b1G\3\2\2\2\u01b2\u01b3\5L\'\2\u01b3\u01b4"+
-		"\7@\2\2\u01b4\u01b5\5J&\2\u01b5I\3\2\2\2\u01b6\u01b7\7.\2\2\u01b7\u01b8"+
-		"\5L\'\2\u01b8\u01b9\7@\2\2\u01b9\u01bb\3\2\2\2\u01ba\u01b6\3\2\2\2\u01ba"+
-		"\u01bb\3\2\2\2\u01bbK\3\2\2\2\u01bc\u01be\7<\2\2\u01bd\u01bc\3\2\2\2\u01bd"+
-		"\u01be\3\2\2\2\u01beM\3\2\2\2\u01bf\u01c0\5T+\2\u01c0\u01c1\5V,\2\u01c1"+
-		"\u01c2\b(\1\2\u01c2O\3\2\2\2\u01c3\u01c4\t\3\2\2\u01c4Q\3\2\2\2\u01c5"+
-		"\u01c6\t\4\2\2\u01c6S\3\2\2\2\u01c7\u01c8\5X-\2\u01c8\u01c9\5Z.\2\u01c9"+
-		"\u01ca\b+\1\2\u01caU\3\2\2\2\u01cb\u01cc\5R*\2\u01cc\u01cd\5T+\2\u01cd"+
-		"\u01ce\5V,\2\u01ce\u01cf\b,\1\2\u01cf\u01d2\3\2\2\2\u01d0\u01d2\3\2\2"+
-		"\2\u01d1\u01cb\3\2\2\2\u01d1\u01d0\3\2\2\2\u01d2W\3\2\2\2\u01d3\u01d4"+
-		"\5\\/\2\u01d4\u01d5\5b\62\2\u01d5\u01d6\b-\1\2\u01d6Y\3\2\2\2\u01d7\u01d8"+
-		"\5P)\2\u01d8\u01d9\5X-\2\u01d9\u01db\3\2\2\2\u01da\u01d7\3\2\2\2\u01db"+
-		"\u01de\3\2\2\2\u01dc\u01da\3\2\2\2\u01dc\u01dd\3\2\2\2\u01dd[\3\2\2\2"+
-		"\u01de\u01dc\3\2\2\2\u01df\u01e0\5L\'\2\u01e0\u01e1\5^\60\2\u01e1\u01e2"+
-		"\b/\1\2\u01e2\u01e7\3\2\2\2\u01e3\u01e4\5`\61\2\u01e4\u01e5\b/\1\2\u01e5"+
-		"\u01e7\3\2\2\2\u01e6\u01df\3\2\2\2\u01e6\u01e3\3\2\2\2\u01e7]\3\2\2\2"+
-		"\u01e8\u01e9\7\f\2\2\u01e9\u01ea\7?\2\2\u01ea\u01eb\5\22\n\2\u01eb\u01ec"+
-		"\5\24\13\2\u01ec\u01ed\b\60\1\2\u01ed\u01fc\3\2\2\2\u01ee\u01ef\7?\2\2"+
-		"\u01ef\u01f0\5d\63\2\u01f0\u01f1\b\60\1\2\u01f1\u01fc\3\2\2\2\u01f2\u01f3"+
-		"\7@\2\2\u01f3\u01fc\b\60\1\2\u01f4\u01f5\7A\2\2\u01f5\u01fc\b\60\1\2\u01f6"+
-		"\u01f7\7\30\2\2\u01f7\u01f8\5l\67\2\u01f8\u01f9\7\31\2\2\u01f9\u01fa\b"+
-		"\60\1\2\u01fa\u01fc\3\2\2\2\u01fb\u01e8\3\2\2\2\u01fb\u01ee\3\2\2\2\u01fb"+
-		"\u01f2\3\2\2\2\u01fb\u01f4\3\2\2\2\u01fb\u01f6\3\2\2\2\u01fc_\3\2\2\2"+
-		"\u01fd\u01fe\7=\2\2\u01fe\u01ff\7?\2\2\u01ff\u0200\5\22\n\2\u0200\u0201"+
-		"\b\61\1\2\u0201\u0202\5\24\13\2\u0202\u0206\3\2\2\2\u0203\u0204\7>\2\2"+
-		"\u0204\u0206\b\61\1\2\u0205\u01fd\3\2\2\2\u0205\u0203\3\2\2\2\u0206a\3"+
-		"\2\2\2\u0207\u0208\7\63\2\2\u0208\u020a\5\\/\2\u0209\u0207\3\2\2\2\u020a"+
-		"\u020d\3\2\2\2\u020b\u0209\3\2\2\2\u020b\u020c\3\2\2\2\u020cc\3\2\2\2"+
-		"\u020d\u020b\3\2\2\2\u020e\u020f\7\30\2\2\u020f\u0210\5l\67\2\u0210\u0211"+
-		"\58\35\2\u0211\u0212\7\31\2\2\u0212\u0219\3\2\2\2\u0213\u0214\5\22\n\2"+
-		"\u0214\u0215\5\24\13\2\u0215\u0216\b\63\1\2\u0216\u0219\3\2\2\2\u0217"+
-		"\u0219\3\2\2\2\u0218\u020e\3\2\2\2\u0218\u0213\3\2\2\2\u0218\u0217\3\2"+
-		"\2\2\u0219e\3\2\2\2\u021a\u021b\5N(\2\u021b\u021c\5h\65\2\u021c\u021d"+
-		"\b\64\1\2\u021dg\3\2\2\2\u021e\u021f\5j\66\2\u021f\u0220\5N(\2\u0220\u0221"+
-		"\b\65\1\2\u0221\u0223\3\2\2\2\u0222\u021e\3\2\2\2\u0222\u0223\3\2\2\2"+
-		"\u0223i\3\2\2\2\u0224\u0225\7\66\2\2\u0225\u0231\b\66\1\2\u0226\u0227"+
-		"\7\67\2\2\u0227\u0231\b\66\1\2\u0228\u0229\7\62\2\2\u0229\u0231\b\66\1"+
-		"\2\u022a\u022b\7\60\2\2\u022b\u0231\b\66\1\2\u022c\u022d\7\65\2\2\u022d"+
-		"\u0231\b\66\1\2\u022e\u022f\7\64\2\2\u022f\u0231\b\66\1\2\u0230\u0224"+
-		"\3\2\2\2\u0230\u0226\3\2\2\2\u0230\u0228\3\2\2\2\u0230\u022a\3\2\2\2\u0230"+
-		"\u022c\3\2\2\2\u0230\u022e\3\2\2\2\u0231k\3\2\2\2\u0232\u0233\5p9\2\u0233"+
-		"\u0234\5r:\2\u0234\u0235\b\67\1\2\u0235m\3\2\2\2\u0236\u0238\7:\2\2\u0237"+
-		"\u0236\3\2\2\2\u0237\u0238\3\2\2\2\u0238o\3\2\2\2\u0239\u023a\5v<\2\u023a"+
-		"\u023b\5t;\2\u023b\u023c\b9\1\2\u023cq\3\2\2\2\u023d\u023e\78\2\2\u023e"+
-		"\u0240\5p9\2\u023f\u023d\3\2\2\2\u0240\u0243\3\2\2\2\u0241\u023f\3\2\2"+
-		"\2\u0241\u0242\3\2\2\2\u0242s\3\2\2\2\u0243\u0241\3\2\2\2\u0244\u0245"+
-		"\79\2\2\u0245\u0247\5v<\2\u0246\u0244\3\2\2\2\u0247\u024a\3\2\2\2\u0248"+
-		"\u0246\3\2\2\2\u0248\u0249\3\2\2\2\u0249u\3\2\2\2\u024a\u0248\3\2\2\2"+
-		"\u024b\u024c\5n8\2\u024c\u024d\5x=\2\u024d\u024e\b<\1\2\u024ew\3\2\2\2"+
-		"\u024f\u0250\7\22\2\2\u0250\u0257\b=\1\2\u0251\u0252\7\23\2\2\u0252\u0257"+
-		"\b=\1\2\u0253\u0254\5f\64\2\u0254\u0255\b=\1\2\u0255\u0257\3\2\2\2\u0256"+
-		"\u024f\3\2\2\2\u0256\u0251\3\2\2\2\u0256\u0253\3\2\2\2\u0257y\3\2\2\2"+
-		"*\u0084\u0089\u009d\u00ac\u00b8\u00bf\u00c8\u00d1\u00d9\u00e0\u00ea\u00f1"+
-		"\u0119\u011c\u0127\u012b\u0130\u0139\u0184\u018c\u0190\u019c\u01a1\u01a9"+
-		"\u01b0\u01ba\u01bd\u01d1\u01dc\u01e6\u01fb\u0205\u020b\u0218\u0222\u0230"+
-		"\u0237\u0241\u0248\u0256";
+		"\34\1\2\u017a\u0184\3\2\2\2\u017b\u017c\7?\2\2\u017c\u017d\5<\37\2\u017d"+
+		"\u017e\b\34\1\2\u017e\u0184\3\2\2\2\u017f\u0180\7-\2\2\u0180\u0181\5l"+
+		"\67\2\u0181\u0182\b\34\1\2\u0182\u0184\3\2\2\2\u0183\u013c\3\2\2\2\u0183"+
+		"\u0144\3\2\2\2\u0183\u014b\3\2\2\2\u0183\u0153\3\2\2\2\u0183\u015b\3\2"+
+		"\2\2\u0183\u0166\3\2\2\2\u0183\u016d\3\2\2\2\u0183\u0173\3\2\2\2\u0183"+
+		"\u017b\3\2\2\2\u0183\u017f\3\2\2\2\u0184\67\3\2\2\2\u0185\u0186\7\13\2"+
+		"\2\u0186\u0187\5l\67\2\u0187\u0188\58\35\2\u0188\u0189\b\35\1\2\u0189"+
+		"\u018c\3\2\2\2\u018a\u018c\3\2\2\2\u018b\u0185\3\2\2\2\u018b\u018a\3\2"+
+		"\2\2\u018c9\3\2\2\2\u018d\u018e\7\"\2\2\u018e\u0190\5\64\33\2\u018f\u018d"+
+		"\3\2\2\2\u018f\u0190\3\2\2\2\u0190;\3\2\2\2\u0191\u0192\7\30\2\2\u0192"+
+		"\u0193\5> \2\u0193\u0194\7\31\2\2\u0194\u019c\3\2\2\2\u0195\u0196\5\22"+
+		"\n\2\u0196\u0197\5\24\13\2\u0197\u0198\7\'\2\2\u0198\u0199\5l\67\2\u0199"+
+		"\u019a\b\37\1\2\u019a\u019c\3\2\2\2\u019b\u0191\3\2\2\2\u019b\u0195\3"+
+		"\2\2\2\u019c=\3\2\2\2\u019d\u019e\5l\67\2\u019e\u019f\58\35\2\u019f\u01a1"+
+		"\3\2\2\2\u01a0\u019d\3\2\2\2\u01a0\u01a1\3\2\2\2\u01a1?\3\2\2\2\u01a2"+
+		"\u01a3\5D#\2\u01a3\u01a4\7\b\2\2\u01a4\u01a5\5\64\33\2\u01a5\u01a6\5B"+
+		"\"\2\u01a6A\3\2\2\2\u01a7\u01a9\5@!\2\u01a8\u01a7\3\2\2\2\u01a8\u01a9"+
+		"\3\2\2\2\u01a9C\3\2\2\2\u01aa\u01ab\5H%\2\u01ab\u01ac\5F$\2\u01acE\3\2"+
+		"\2\2\u01ad\u01ae\7\13\2\2\u01ae\u01b0\5D#\2\u01af\u01ad\3\2\2\2\u01af"+
+		"\u01b0\3\2\2\2\u01b0G\3\2\2\2\u01b1\u01b2\5L\'\2\u01b2\u01b3\7@\2\2\u01b3"+
+		"\u01b4\5J&\2\u01b4I\3\2\2\2\u01b5\u01b6\7.\2\2\u01b6\u01b7\5L\'\2\u01b7"+
+		"\u01b8\7@\2\2\u01b8\u01ba\3\2\2\2\u01b9\u01b5\3\2\2\2\u01b9\u01ba\3\2"+
+		"\2\2\u01baK\3\2\2\2\u01bb\u01bd\7<\2\2\u01bc\u01bb\3\2\2\2\u01bc\u01bd"+
+		"\3\2\2\2\u01bdM\3\2\2\2\u01be\u01bf\5T+\2\u01bf\u01c0\5V,\2\u01c0\u01c1"+
+		"\b(\1\2\u01c1O\3\2\2\2\u01c2\u01c3\t\3\2\2\u01c3Q\3\2\2\2\u01c4\u01c5"+
+		"\t\4\2\2\u01c5S\3\2\2\2\u01c6\u01c7\5X-\2\u01c7\u01c8\5Z.\2\u01c8\u01c9"+
+		"\b+\1\2\u01c9U\3\2\2\2\u01ca\u01cb\5R*\2\u01cb\u01cc\5T+\2\u01cc\u01cd"+
+		"\5V,\2\u01cd\u01ce\b,\1\2\u01ce\u01d1\3\2\2\2\u01cf\u01d1\3\2\2\2\u01d0"+
+		"\u01ca\3\2\2\2\u01d0\u01cf\3\2\2\2\u01d1W\3\2\2\2\u01d2\u01d3\5\\/\2\u01d3"+
+		"\u01d4\5b\62\2\u01d4\u01d5\b-\1\2\u01d5Y\3\2\2\2\u01d6\u01d7\5P)\2\u01d7"+
+		"\u01d8\5X-\2\u01d8\u01da\3\2\2\2\u01d9\u01d6\3\2\2\2\u01da\u01dd\3\2\2"+
+		"\2\u01db\u01d9\3\2\2\2\u01db\u01dc\3\2\2\2\u01dc[\3\2\2\2\u01dd\u01db"+
+		"\3\2\2\2\u01de\u01df\5L\'\2\u01df\u01e0\5^\60\2\u01e0\u01e1\b/\1\2\u01e1"+
+		"\u01e6\3\2\2\2\u01e2\u01e3\5`\61\2\u01e3\u01e4\b/\1\2\u01e4\u01e6\3\2"+
+		"\2\2\u01e5\u01de\3\2\2\2\u01e5\u01e2\3\2\2\2\u01e6]\3\2\2\2\u01e7\u01e8"+
+		"\7\f\2\2\u01e8\u01e9\7?\2\2\u01e9\u01ea\5\22\n\2\u01ea\u01eb\5\24\13\2"+
+		"\u01eb\u01ec\b\60\1\2\u01ec\u01fb\3\2\2\2\u01ed\u01ee\7?\2\2\u01ee\u01ef"+
+		"\5d\63\2\u01ef\u01f0\b\60\1\2\u01f0\u01fb\3\2\2\2\u01f1\u01f2\7@\2\2\u01f2"+
+		"\u01fb\b\60\1\2\u01f3\u01f4\7A\2\2\u01f4\u01fb\b\60\1\2\u01f5\u01f6\7"+
+		"\30\2\2\u01f6\u01f7\5l\67\2\u01f7\u01f8\7\31\2\2\u01f8\u01f9\b\60\1\2"+
+		"\u01f9\u01fb\3\2\2\2\u01fa\u01e7\3\2\2\2\u01fa\u01ed\3\2\2\2\u01fa\u01f1"+
+		"\3\2\2\2\u01fa\u01f3\3\2\2\2\u01fa\u01f5\3\2\2\2\u01fb_\3\2\2\2\u01fc"+
+		"\u01fd\7=\2\2\u01fd\u01fe\7?\2\2\u01fe\u01ff\5\22\n\2\u01ff\u0200\b\61"+
+		"\1\2\u0200\u0201\5\24\13\2\u0201\u0205\3\2\2\2\u0202\u0203\7>\2\2\u0203"+
+		"\u0205\b\61\1\2\u0204\u01fc\3\2\2\2\u0204\u0202\3\2\2\2\u0205a\3\2\2\2"+
+		"\u0206\u0207\7\63\2\2\u0207\u0209\5\\/\2\u0208\u0206\3\2\2\2\u0209\u020c"+
+		"\3\2\2\2\u020a\u0208\3\2\2\2\u020a\u020b\3\2\2\2\u020bc\3\2\2\2\u020c"+
+		"\u020a\3\2\2\2\u020d\u020e\7\30\2\2\u020e\u020f\5l\67\2\u020f\u0210\5"+
+		"8\35\2\u0210\u0211\7\31\2\2\u0211\u0218\3\2\2\2\u0212\u0213\5\22\n\2\u0213"+
+		"\u0214\5\24\13\2\u0214\u0215\b\63\1\2\u0215\u0218\3\2\2\2\u0216\u0218"+
+		"\3\2\2\2\u0217\u020d\3\2\2\2\u0217\u0212\3\2\2\2\u0217\u0216\3\2\2\2\u0218"+
+		"e\3\2\2\2\u0219\u021a\5N(\2\u021a\u021b\5h\65\2\u021b\u021c\b\64\1\2\u021c"+
+		"g\3\2\2\2\u021d\u021e\5j\66\2\u021e\u021f\5N(\2\u021f\u0220\b\65\1\2\u0220"+
+		"\u0222\3\2\2\2\u0221\u021d\3\2\2\2\u0221\u0222\3\2\2\2\u0222i\3\2\2\2"+
+		"\u0223\u0224\7\66\2\2\u0224\u0230\b\66\1\2\u0225\u0226\7\67\2\2\u0226"+
+		"\u0230\b\66\1\2\u0227\u0228\7\62\2\2\u0228\u0230\b\66\1\2\u0229\u022a"+
+		"\7\60\2\2\u022a\u0230\b\66\1\2\u022b\u022c\7\65\2\2\u022c\u0230\b\66\1"+
+		"\2\u022d\u022e\7\64\2\2\u022e\u0230\b\66\1\2\u022f\u0223\3\2\2\2\u022f"+
+		"\u0225\3\2\2\2\u022f\u0227\3\2\2\2\u022f\u0229\3\2\2\2\u022f\u022b\3\2"+
+		"\2\2\u022f\u022d\3\2\2\2\u0230k\3\2\2\2\u0231\u0232\5p9\2\u0232\u0233"+
+		"\5r:\2\u0233\u0234\b\67\1\2\u0234m\3\2\2\2\u0235\u0237\7:\2\2\u0236\u0235"+
+		"\3\2\2\2\u0236\u0237\3\2\2\2\u0237o\3\2\2\2\u0238\u0239\5v<\2\u0239\u023a"+
+		"\5t;\2\u023a\u023b\b9\1\2\u023bq\3\2\2\2\u023c\u023d\78\2\2\u023d\u023f"+
+		"\5p9\2\u023e\u023c\3\2\2\2\u023f\u0242\3\2\2\2\u0240\u023e\3\2\2\2\u0240"+
+		"\u0241\3\2\2\2\u0241s\3\2\2\2\u0242\u0240\3\2\2\2\u0243\u0244\79\2\2\u0244"+
+		"\u0246\5v<\2\u0245\u0243\3\2\2\2\u0246\u0249\3\2\2\2\u0247\u0245\3\2\2"+
+		"\2\u0247\u0248\3\2\2\2\u0248u\3\2\2\2\u0249\u0247\3\2\2\2\u024a\u024b"+
+		"\5n8\2\u024b\u024c\5x=\2\u024c\u024d\b<\1\2\u024dw\3\2\2\2\u024e\u024f"+
+		"\7\22\2\2\u024f\u0256\b=\1\2\u0250\u0251\7\23\2\2\u0251\u0256\b=\1\2\u0252"+
+		"\u0253\5f\64\2\u0253\u0254\b=\1\2\u0254\u0256\3\2\2\2\u0255\u024e\3\2"+
+		"\2\2\u0255\u0250\3\2\2\2\u0255\u0252\3\2\2\2\u0256y\3\2\2\2*\u0084\u0089"+
+		"\u009d\u00ac\u00b8\u00bf\u00c8\u00d1\u00d9\u00e0\u00ea\u00f1\u0119\u011c"+
+		"\u0127\u012b\u0130\u0139\u0183\u018b\u018f\u019b\u01a0\u01a8\u01af\u01b9"+
+		"\u01bc\u01d0\u01db\u01e5\u01fa\u0204\u020a\u0217\u0221\u022f\u0236\u0240"+
+		"\u0247\u0255";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

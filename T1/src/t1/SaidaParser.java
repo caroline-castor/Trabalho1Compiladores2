@@ -2,30 +2,30 @@ package t1;
 
 public class SaidaParser {
 
-    StringBuffer conteudo;
-    boolean modificado;
+    StringBuffer texto;
+    boolean modified;
 
     public SaidaParser() {
-        conteudo = new StringBuffer();
-        modificado = false;
+        texto= new StringBuffer();
+        modified = false;
     }
 
     public void println(String texto) {
-        if(!modificado) modificado = true;
-        conteudo.append(texto);
-        conteudo.append("\n");
+        if(!modified) modified = true;
+        this.texto.append(texto);
+        this.texto.append("\n");
     }
     
-    public boolean isModificado() {
-        return modificado;
+    public boolean isModified() {
+        return modified;
     }
     
-    public void modifica(){
-        modificado = true;
+    public void modify(){
+        modified = true;
     }
 
     @Override
     public String toString() {
-        return conteudo.toString();
+        return texto.toString();
     }
 }

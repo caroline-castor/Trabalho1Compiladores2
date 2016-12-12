@@ -102,7 +102,7 @@ public class LALexer extends Lexer {
 	}
 
 
-	   public static String grupo="551503,";
+	   public static String grupo="551503, 586773";
 	   String msg_error="";
 	   PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
 	   PilhaDeTabelas tabelaRegistros = new PilhaDeTabelas();
